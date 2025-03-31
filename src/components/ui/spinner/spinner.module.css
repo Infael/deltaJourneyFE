@@ -1,0 +1,23 @@
+.spinner {
+  --spin-count: 2;
+  animation: spin 1.5s ease-out infinite;
+}
+
+/* Animácia otáčania */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  20% {
+    transform: rotate(0deg);
+  }
+  60% {
+    transform: rotate(calc(360deg * var(--spin-count)));
+  }
+  70% {
+    transform: rotate(calc(360deg * var(--spin-count)));
+  }
+  100% {
+    transform: rotate(calc(360deg * calc(var(--spin-count) - 1)));
+  }
+}
