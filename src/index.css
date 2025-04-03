@@ -5,7 +5,9 @@
 
 :root {
   --main: #ffdc58;
+  --main-dark: #f5c700;
   --overlay: rgba(0, 0, 0, 0.8); /* background color overlay for alert dialogs, modals, etc. */
+  --danger: #ff5454; /* danger color for error messages, etc. */
 
   --bg: #fef2e8;
   --bw: #fff; /* white and secondary black e.g. utility class variant would be: bg-[#fff] dark:bg-[#212121] */
@@ -44,6 +46,8 @@
   --color-secondaryBlack: #212121;
   --color-overlay: var(--overlay);
   --color-main: var(--main);
+  --color-mainDark: var(--main-dark);
+  --color-danger: var(--danger);
   --color-bg: var(--bg);
   --color-bw: var(--bw);
   --color-blank: var(--blank);

@@ -22,7 +22,7 @@ export const Navigation = () => {
         <div className="flex gap-4">
           <Button
             onClick={() => {
-              navigate(Routes.PROJECTS_PAGE);
+              navigate(Routes.ALL_PROJECTS_PAGE);
             }}
           >
             My Maps

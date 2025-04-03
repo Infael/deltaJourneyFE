@@ -1,5 +1,6 @@
 export enum Routes {
   LANDING_PAGE = "/",
   ERROR_PAGE = "/error",
-  PROJECTS_PAGE = "/projects",
+  ALL_PROJECTS_PAGE = "/projects",
+  PROJECT_PAGE = "/project",
 }

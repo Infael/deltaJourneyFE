@@ -1,9 +1,10 @@
 import { PageWrapper } from "@/components/layout/pageWrapper";
 import { Spinner } from "@/components/ui/spinner/spinner";
 import { AuthorizedRoute } from "@/components/wrapper/authorizedRoute";
+import { AllProjectsPage } from "@/pages/allProjectsPage/projectsPage";
 import { ErrorPage } from "@/pages/errorPage/errorPage";
 import { LandingPage } from "@/pages/landingPage/landingPage";
-import { ProjectPage } from "@/pages/projectsPage/ProjectsPage";
+import { ProjectPage } from "@/pages/projectPage/projectPage";
 import { Suspense } from "react";
 import { createBrowserRouter, createRoutesFromElements, Navigate, Outlet, Route } from "react-router-dom";
 import { Routes } from "./routes";
@@ -29,7 +30,8 @@ export const Router = createBrowserRouter(
         <Route path={Routes.LANDING_PAGE} element={<LandingPage />} />
         <Route path={Routes.ERROR_PAGE} element={<ErrorPage />} />
         <Route element={<AuthorizedRoute />}>
-          <Route path={Routes.PROJECTS_PAGE} element={<ProjectPage />} />
+          <Route path={Routes.ALL_PROJECTS_PAGE} element={<AllProjectsPage />} />
+          <Route path={Routes.PROJECT_PAGE} element={<ProjectPage />} />
         </Route>
       </Route>
     </Route>,

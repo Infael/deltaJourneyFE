@@ -29,7 +29,7 @@ export const fetchClient = async <T>(
       ...customOptions?.headers,
       Authorization: `Bearer ${accessToken}`,
     },
-    body: data ?? undefined, // Orval generates code with data instead of body, so if data is present, we use it as the body
+    body: JSON.stringify(data) ?? undefined, // Orval generates code with data instead of body, so if data is present, we use it as the body
   });
 
   if (!response.ok) {
