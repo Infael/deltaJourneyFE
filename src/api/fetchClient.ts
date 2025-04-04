@@ -21,20 +21,30 @@ export const fetchClient = async <T>(
   // If the params exist, we add them to the URL query string
   const queryString = params ? "?" + new URLSearchParams(params as Record<string, string>).toString() : "";
 
+  const isFormData = typeof FormData !== "undefined" && data instanceof FormData;
+
   const response = await fetch(url + queryString, {
     ...options,
     ...customOptions,
     headers: {
+      ...(!isFormData && {
+        "Content-Type": "application/json", // nastav Content-Type len ak nie je FormData
+      }),
       ...options.headers,
       ...customOptions?.headers,
       Authorization: `Bearer ${accessToken}`,
     },
-    body: JSON.stringify(data) ?? undefined, // Orval generates code with data instead of body, so if data is present, we use it as the body
+    body: isFormData ? data : data ? JSON.stringify(data) : undefined,
   });
 
   if (!response.ok) {
     throw new Error(`API Error: ${response.statusText}`);
   }
 
-  return response.json() as Promise<T>;
+  // Check if the response is empty
+  const contentType = response.headers.get("Content-Type");
+  if (contentType && contentType.includes("application/json")) {
+    return response.json() as Promise<T>;
+  }
+  return Promise.resolve({} as T); // Return an empty object if the response is not JSON
 };

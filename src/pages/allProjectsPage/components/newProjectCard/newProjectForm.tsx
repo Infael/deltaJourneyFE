@@ -1,7 +1,10 @@
 import { useUploadDriveFileCreate } from "@/api/driveApi/custom-drive-api";
+import { getDriveFilesListQueryKey } from "@/api/driveApi/drive-api";
+import { queryClient } from "@/api/queryClient";
 import { Button } from "@/components/ui/button";
 import { useAppForm } from "@/hooks/useForm";
 import { Routes } from "@/router/routes";
+import { FC } from "react";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 
@@ -12,11 +15,16 @@ const newProjectSchema = z.object({
   }),
 });
 
-export const NewProjectForm = () => {
-  const navigate = useNavigate();
-  const { mutate: createFile, isPending } = useUploadDriveFileCreate();
+interface NewProjectFormProps {
+  onCreate: () => void;
+}
 
-  const createNewFile = async (name: string) => {
+export const NewProjectForm: FC<NewProjectFormProps> = ({ onCreate }) => {
+  const navigate = useNavigate();
+  const { mutateAsync: createFile, isPending } = useUploadDriveFileCreate();
+
+  const createNewFile = (name: string) => {
+    console.log(name);
     const fileMetadata = {
       name: `${name}.dj`,
       mimeType: "application/json",
@@ -25,9 +33,18 @@ export const NewProjectForm = () => {
 
     const formData = new FormData();
     formData.append("metadata", new Blob([JSON.stringify(fileMetadata)], { type: "application/json" }));
-    formData.append("file", new Blob([fileContent], { type: "application/json" }));
+    formData.append("file", new File([fileContent], `${name}.dj`, { type: "application/json" }));
 
-    createFile({ data: formData, params: { uploadType: "multipart" } });
+    const metadataBlob = formData.get("file") as Blob;
+    metadataBlob.text().then(console.log);
+
+    createFile({ data: formData, params: { uploadType: "multipart" } })
+      .then(() => {
+        queryClient.invalidateQueries({ queryKey: getDriveFilesListQueryKey() });
+      })
+      .finally(() => {
+        onCreate();
+      });
   };
 
   const form = useAppForm({
@@ -42,6 +59,7 @@ export const NewProjectForm = () => {
       if (values.value.storage === "local") {
         navigate(Routes.PROJECT_PAGE);
       } else if (values.value.storage === "drive") {
+        console.log(values);
         createNewFile(values.value.projectName);
       }
     },

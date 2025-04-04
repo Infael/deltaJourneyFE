@@ -6,7 +6,8 @@ import { ProjectCard } from "./components/projectCard/projectCard";
 
 export const AllProjectsPage = () => {
   const { data } = useDriveFilesListSuspense({
-    orderBy: "modifiedTime,createdTime,name",
+    orderBy: "createdTime desc,name",
+    fields: "files(id,name,mimeType,createdTime,modifiedTime,owners)",
   });
 
   return (
@@ -21,7 +22,14 @@ export const AllProjectsPage = () => {
           <ProjectCard
             key={file.id}
             id={file.id!}
-            title={file.name?.split(".")[0] ?? `Drive File ${file.id}`}
+            projectName={file.name?.split(".")[0] ?? `Drive File ${file.id}`}
+            createdAt={file.createdTime!}
+            lastModified={file.modifiedTime!}
+            owners={
+              file.owners?.map((owner) => owner.displayName).filter((name): name is string => Boolean(name)) ?? [
+                "Unknown",
+              ]
+            }
             onClick={() => {}}
             storage="drive"
           />

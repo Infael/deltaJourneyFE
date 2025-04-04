@@ -1,7 +1,7 @@
 import { getDriveFilesListQueryKey, useDriveFilesUpdate } from "@/api/driveApi/drive-api";
 import { queryClient } from "@/api/queryClient";
 import { Button } from "@/components/ui/button";
-import { DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useAppForm } from "@/hooks/useForm";
 import { FC } from "react";
 import { z } from "zod";
@@ -9,9 +9,11 @@ import { z } from "zod";
 interface RenameModalProps {
   projectId: string;
   projectName: string;
+  open: boolean;
+  setOpen: (open: boolean) => void;
 }
 
-export const RenameModal: FC<RenameModalProps> = ({ projectId, projectName }) => {
+export const RenameModal: FC<RenameModalProps> = ({ projectId, projectName, open, setOpen }) => {
   const { mutateAsync: renameFile, isPending } = useDriveFilesUpdate();
 
   const form = useAppForm({
@@ -29,34 +31,39 @@ export const RenameModal: FC<RenameModalProps> = ({ projectId, projectName }) =>
         data: {
           name: `${values.value.projectName}.dj`,
         },
-      }).then(() => {
-        queryClient.invalidateQueries({ queryKey: getDriveFilesListQueryKey() });
-      });
+      })
+        .then(() => {
+          queryClient.invalidateQueries({ queryKey: getDriveFilesListQueryKey() });
+        })
+        .finally(() => {
+          setOpen(false);
+        });
     },
   });
 
   return (
-    <DialogContent>
-      <DialogHeader>
-        <DialogTitle>Rename Project</DialogTitle>
-        <DialogDescription className="hidden">Dialog for renaming the project</DialogDescription>
-      </DialogHeader>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          form.handleSubmit();
-        }}
-        className="flex flex-col gap-4"
-      >
-        <form.AppField name="projectName">
-          {(field) => <field.TextField label="Enter the new name for your Project:" />}
-        </form.AppField>
-        <DialogClose asChild>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Rename Project</DialogTitle>
+          <DialogDescription className="hidden">Dialog for renaming the project</DialogDescription>
+        </DialogHeader>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            form.handleSubmit();
+          }}
+          className="flex flex-col gap-4"
+        >
+          <form.AppField name="projectName">
+            {(field) => <field.TextField label="Enter the new name for your Project:" />}
+          </form.AppField>
+
           <Button type="submit" className="w-full" disabled={isPending}>
             Rename
           </Button>
-        </DialogClose>
-      </form>
-    </DialogContent>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 };
