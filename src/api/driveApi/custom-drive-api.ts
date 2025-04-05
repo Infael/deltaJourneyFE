@@ -1,9 +1,9 @@
 import { MutationFunction, useMutation } from "@tanstack/react-query";
 import { fetchClient } from "../fetchClient";
-import { DriveFilesCreateParams } from "./drive-api.schemas";
+import { DriveFilesCreateParams, File } from "./drive-api.schemas";
 
 const driveFileCreate = (fileWithMetadata: FormData, params?: DriveFilesCreateParams) => {
-  return fetchClient<FormData>({
+  return fetchClient<File>({
     url: "https://www.googleapis.com/upload/drive/v3/files",
     method: "POST",
     data: fileWithMetadata,

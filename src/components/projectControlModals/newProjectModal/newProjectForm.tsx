@@ -4,6 +4,8 @@ import { queryClient } from "@/api/queryClient";
 import { Button } from "@/components/ui/button";
 import { useAppForm } from "@/hooks/useForm";
 import { Routes } from "@/router/routes";
+import { projectAtom } from "@/state/projectState";
+import { useSetAtom } from "jotai";
 import { FC } from "react";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
@@ -16,12 +18,13 @@ const newProjectSchema = z.object({
 });
 
 interface NewProjectFormProps {
-  onCreate: () => void;
+  onCreate: (newProjectId: string) => void;
 }
 
 export const NewProjectForm: FC<NewProjectFormProps> = ({ onCreate }) => {
   const navigate = useNavigate();
   const { mutateAsync: createFile, isPending } = useUploadDriveFileCreate();
+  const addProjectToState = useSetAtom(projectAtom);
 
   const createNewFile = (name: string) => {
     console.log(name);
@@ -38,13 +41,10 @@ export const NewProjectForm: FC<NewProjectFormProps> = ({ onCreate }) => {
     const metadataBlob = formData.get("file") as Blob;
     metadataBlob.text().then(console.log);
 
-    createFile({ data: formData, params: { uploadType: "multipart" } })
-      .then(() => {
-        queryClient.invalidateQueries({ queryKey: getDriveFilesListQueryKey() });
-      })
-      .finally(() => {
-        onCreate();
-      });
+    createFile({ data: formData, params: { uploadType: "multipart" } }).then((data) => {
+      queryClient.invalidateQueries({ queryKey: getDriveFilesListQueryKey() });
+      onCreate(data.id!);
+    });
   };
 
   const form = useAppForm({
@@ -57,9 +57,19 @@ export const NewProjectForm: FC<NewProjectFormProps> = ({ onCreate }) => {
     },
     onSubmit: (values) => {
       if (values.value.storage === "local") {
+        addProjectToState({
+          project: {},
+          projectMetadata: {
+            id: "",
+            name: values.value.projectName,
+            createdTime: new Date().toISOString(),
+            modifiedTime: new Date().toISOString(),
+            owners: [],
+          },
+          projectStorage: "local",
+        });
         navigate(Routes.PROJECT_PAGE);
       } else if (values.value.storage === "drive") {
-        console.log(values);
         createNewFile(values.value.projectName);
       }
     },

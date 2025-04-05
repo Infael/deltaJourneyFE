@@ -9,11 +9,11 @@ import {
 import { Heading } from "@/components/ui/heading";
 import { FC, useState } from "react";
 
+import { DeleteModal } from "@/components/projectControlModals/deleteModal";
+import { MoreInfoModal } from "@/components/projectControlModals/moreInfoModal";
+import { RenameModal } from "@/components/projectControlModals/renameModal";
+import { ShareModal } from "@/components/projectControlModals/shareModal";
 import driveIcon from "../../assets/driveIcon.svg";
-import { DeleteModal } from "./components/deleteModal";
-import { MoreInfoModal } from "./components/moreInfoModal";
-import { RenameModal } from "./components/renameModal";
-import { ShareModal } from "./components/shareModal";
 
 interface ProjectCardProps {
   id: string;
@@ -22,7 +22,7 @@ interface ProjectCardProps {
   lastModified: string;
   owners: string[];
   storage: "drive" | "local" | "db";
-  onClick: () => void;
+  onOpen: () => void;
 }
 
 export const ProjectCard: FC<ProjectCardProps> = ({
@@ -32,7 +32,7 @@ export const ProjectCard: FC<ProjectCardProps> = ({
   lastModified,
   owners,
   storage,
-  onClick,
+  onOpen,
 }) => {
   const [moreInfoModalOpen, setMoreInfoModalOpen] = useState(false);
   const [renameDialogOpen, setRenameDialogOpen] = useState(false);
@@ -58,7 +58,7 @@ export const ProjectCard: FC<ProjectCardProps> = ({
         <img src={getStorageIcon()} alt="Drive Icon" className="size-28" />
         <Heading level="h3">{projectName}</Heading>
         <div className="w-content flex flex-col gap-3">
-          <Button onClick={onClick} variant="noShadow">
+          <Button onClick={onOpen} variant="noShadow">
             Open Project
           </Button>
           <DropdownMenu>

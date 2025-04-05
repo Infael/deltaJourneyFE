@@ -2026,6 +2026,7 @@ export const driveFilesCreate = (
     {
       url: `https://www.googleapis.com/drive/v3/files`,
       method: "POST",
+      headers: { "Content-Type": "application/octet-stream" },
       data: file,
       params,
       signal,
@@ -2424,166 +2425,61 @@ export const driveFilesGet = (
   );
 };
 
-export const getDriveFilesGetQueryKey = (fileId: string, params?: DriveFilesGetParams) => {
-  return [`https://www.googleapis.com/drive/v3/files/${fileId}`, ...(params ? [params] : [])] as const;
-};
-
-export const getDriveFilesGetQueryOptions = <TData = Awaited<ReturnType<typeof driveFilesGet>>, TError = unknown>(
-  fileId: string,
-  params?: DriveFilesGetParams,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof driveFilesGet>>, TError, TData>>;
-    request?: SecondParameter<typeof fetchClient>;
-  },
-) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey = queryOptions?.queryKey ?? getDriveFilesGetQueryKey(fileId, params);
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof driveFilesGet>>> = ({ signal }) =>
-    driveFilesGet(fileId, params, requestOptions, signal);
-
-  return { queryKey, queryFn, enabled: !!fileId, ...queryOptions } as UseQueryOptions<
+export const getDriveFilesGetMutationOptions = <TError = unknown, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof driveFilesGet>>,
     TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
+    { fileId: string; params?: DriveFilesGetParams },
+    TContext
+  >;
+  request?: SecondParameter<typeof fetchClient>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof driveFilesGet>>,
+  TError,
+  { fileId: string; params?: DriveFilesGetParams },
+  TContext
+> => {
+  const mutationKey = ["driveFilesGet"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
 
-export type DriveFilesGetQueryResult = NonNullable<Awaited<ReturnType<typeof driveFilesGet>>>;
-export type DriveFilesGetQueryError = unknown;
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof driveFilesGet>>,
+    { fileId: string; params?: DriveFilesGetParams }
+  > = (props) => {
+    const { fileId, params } = props ?? {};
 
-export function useDriveFilesGet<TData = Awaited<ReturnType<typeof driveFilesGet>>, TError = unknown>(
-  fileId: string,
-  params: undefined | DriveFilesGetParams,
-  options: {
-    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof driveFilesGet>>, TError, TData>> &
-      Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof driveFilesGet>>,
-          TError,
-          Awaited<ReturnType<typeof driveFilesGet>>
-        >,
-        "initialData"
-      >;
-    request?: SecondParameter<typeof fetchClient>;
-  },
-): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useDriveFilesGet<TData = Awaited<ReturnType<typeof driveFilesGet>>, TError = unknown>(
-  fileId: string,
-  params?: DriveFilesGetParams,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof driveFilesGet>>, TError, TData>> &
-      Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof driveFilesGet>>,
-          TError,
-          Awaited<ReturnType<typeof driveFilesGet>>
-        >,
-        "initialData"
-      >;
-    request?: SecondParameter<typeof fetchClient>;
-  },
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useDriveFilesGet<TData = Awaited<ReturnType<typeof driveFilesGet>>, TError = unknown>(
-  fileId: string,
-  params?: DriveFilesGetParams,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof driveFilesGet>>, TError, TData>>;
-    request?: SecondParameter<typeof fetchClient>;
-  },
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-export function useDriveFilesGet<TData = Awaited<ReturnType<typeof driveFilesGet>>, TError = unknown>(
-  fileId: string,
-  params?: DriveFilesGetParams,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof driveFilesGet>>, TError, TData>>;
-    request?: SecondParameter<typeof fetchClient>;
-  },
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getDriveFilesGetQueryOptions(fileId, params, options);
-
-  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
+    return driveFilesGet(fileId, params, requestOptions);
   };
 
-  query.queryKey = queryOptions.queryKey;
+  return { mutationFn, ...mutationOptions };
+};
 
-  return query;
-}
+export type DriveFilesGetMutationResult = NonNullable<Awaited<ReturnType<typeof driveFilesGet>>>;
 
-export const getDriveFilesGetSuspenseQueryOptions = <
-  TData = Awaited<ReturnType<typeof driveFilesGet>>,
-  TError = unknown,
->(
-  fileId: string,
-  params?: DriveFilesGetParams,
-  options?: {
-    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof driveFilesGet>>, TError, TData>>;
-    request?: SecondParameter<typeof fetchClient>;
-  },
-) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
+export type DriveFilesGetMutationError = unknown;
 
-  const queryKey = queryOptions?.queryKey ?? getDriveFilesGetQueryKey(fileId, params);
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof driveFilesGet>>> = ({ signal }) =>
-    driveFilesGet(fileId, params, requestOptions, signal);
-
-  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+export const useDriveFilesGet = <TError = unknown, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof driveFilesGet>>,
     TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
+    { fileId: string; params?: DriveFilesGetParams },
+    TContext
+  >;
+  request?: SecondParameter<typeof fetchClient>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof driveFilesGet>>,
+  TError,
+  { fileId: string; params?: DriveFilesGetParams },
+  TContext
+> => {
+  const mutationOptions = getDriveFilesGetMutationOptions(options);
+
+  return useMutation(mutationOptions);
 };
-
-export type DriveFilesGetSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof driveFilesGet>>>;
-export type DriveFilesGetSuspenseQueryError = unknown;
-
-export function useDriveFilesGetSuspense<TData = Awaited<ReturnType<typeof driveFilesGet>>, TError = unknown>(
-  fileId: string,
-  params: undefined | DriveFilesGetParams,
-  options: {
-    query: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof driveFilesGet>>, TError, TData>>;
-    request?: SecondParameter<typeof fetchClient>;
-  },
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useDriveFilesGetSuspense<TData = Awaited<ReturnType<typeof driveFilesGet>>, TError = unknown>(
-  fileId: string,
-  params?: DriveFilesGetParams,
-  options?: {
-    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof driveFilesGet>>, TError, TData>>;
-    request?: SecondParameter<typeof fetchClient>;
-  },
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useDriveFilesGetSuspense<TData = Awaited<ReturnType<typeof driveFilesGet>>, TError = unknown>(
-  fileId: string,
-  params?: DriveFilesGetParams,
-  options?: {
-    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof driveFilesGet>>, TError, TData>>;
-    request?: SecondParameter<typeof fetchClient>;
-  },
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-export function useDriveFilesGetSuspense<TData = Awaited<ReturnType<typeof driveFilesGet>>, TError = unknown>(
-  fileId: string,
-  params?: DriveFilesGetParams,
-  options?: {
-    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof driveFilesGet>>, TError, TData>>;
-    request?: SecondParameter<typeof fetchClient>;
-  },
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getDriveFilesGetSuspenseQueryOptions(fileId, params, options);
-
-  const query = useSuspenseQuery(queryOptions) as UseSuspenseQueryResult<TData, TError> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
-  };
-
-  query.queryKey = queryOptions.queryKey;
-
-  return query;
-}
 
 /**
  *  Updates a file's metadata and/or content. When calling this method, only populate fields in the request that you want to modify. When updating fields, some fields might be changed automatically, such as `modifiedDate`. This method supports patch semantics. This method supports an *\/upload* URI and accepts uploaded media with the following characteristics: - *Maximum file size:* 5,120 GB - *Accepted Media MIME types:*`*\/*` Note: Specify a valid MIME type, rather than the literal `*\/*` value. The literal `*\/*` is only used to indicate that any valid MIME type can be uploaded. For more information on uploading files, see [Upload file data](/drive/api/guides/manage-uploads).

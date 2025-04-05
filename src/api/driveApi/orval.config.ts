@@ -17,6 +17,15 @@ export default defineConfig({
         query: {
           useSuspenseQuery: true,
         },
+        operations: {
+          "drive.files.get": {
+            query: {
+              useQuery: false,
+              useSuspenseQuery: false,
+              useMutation: true,
+            },
+          },
+        },
       },
     },
     hooks: {

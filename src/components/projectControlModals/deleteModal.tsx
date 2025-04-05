@@ -15,9 +15,10 @@ interface DeleteModal {
   projectId: string;
   open: boolean;
   setOpen: (open: boolean) => void;
+  onDelete?: () => void;
 }
 
-export const DeleteModal: FC<DeleteModal> = ({ projectId, open, setOpen }) => {
+export const DeleteModal: FC<DeleteModal> = ({ projectId, open, setOpen, onDelete }) => {
   const { mutateAsync: deleteFile, isPending } = useDriveFilesDelete();
 
   const handleDelete = () => {
@@ -27,6 +28,9 @@ export const DeleteModal: FC<DeleteModal> = ({ projectId, open, setOpen }) => {
       })
       .finally(() => {
         setOpen(false);
+        if (onDelete) {
+          onDelete();
+        }
       });
   };
 

@@ -1,14 +1,26 @@
 import { useDriveFilesListSuspense } from "@/api/driveApi/drive-api";
 import { Heading } from "@/components/ui/heading";
+import { Routes } from "@/router/routes";
+import { initialProjectState, projectAtom } from "@/state/projectState";
+import { useSetAtom } from "jotai";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { NewProjectCard } from "./components/newProjectCard/newProjectCard";
 import { OpenLocallyCard } from "./components/openLocallyCard/openLocallyCard";
 import { ProjectCard } from "./components/projectCard/projectCard";
 
 export const AllProjectsPage = () => {
+  const navigate = useNavigate();
+  const setProjectData = useSetAtom(projectAtom);
+
   const { data } = useDriveFilesListSuspense({
     orderBy: "createdTime desc,name",
     fields: "files(id,name,mimeType,createdTime,modifiedTime,owners)",
   });
+
+  useEffect(() => {
+    setProjectData(initialProjectState);
+  }, [setProjectData]);
 
   return (
     <div className="mx-auto flex max-w-[1600px] flex-col gap-8 p-8">
@@ -30,7 +42,7 @@ export const AllProjectsPage = () => {
                 "Unknown",
               ]
             }
-            onClick={() => {}}
+            onOpen={() => navigate(Routes.PROJECT_PAGE, { state: { fileMetadata: file } })}
             storage="drive"
           />
         ))}

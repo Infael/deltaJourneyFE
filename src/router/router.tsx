@@ -1,37 +1,36 @@
 import { PageWrapper } from "@/components/layout/pageWrapper";
-import { Spinner } from "@/components/ui/spinner/spinner";
 import { AuthorizedRoute } from "@/components/wrapper/authorizedRoute";
-import { AllProjectsPage } from "@/pages/allProjectsPage/projectsPage";
+import { SuspenseWrapper } from "@/components/wrapper/suspenseWrapper";
+import { AllProjectsPage } from "@/pages/allProjectsPage/allProjectsPage";
 import { ErrorPage } from "@/pages/errorPage/errorPage";
 import { LandingPage } from "@/pages/landingPage/landingPage";
 import { ProjectPage } from "@/pages/projectPage/projectPage";
-import { Suspense } from "react";
-import { createBrowserRouter, createRoutesFromElements, Navigate, Outlet, Route } from "react-router-dom";
+import { createBrowserRouter, createRoutesFromElements, Navigate, Route } from "react-router-dom";
 import { Routes } from "./routes";
 
 export const Router = createBrowserRouter(
   createRoutesFromElements(
     <Route element={<PageWrapper />}>
-      <Route
-        path={Routes.LANDING_PAGE}
-        element={
-          <Suspense
-            fallback={
-              <div className="flex w-screen items-center justify-center py-64">
-                <Spinner text="Loading..." />
-              </div>
-            }
-          >
-            <Outlet />
-          </Suspense>
-        }
-        errorElement={<Navigate to={Routes.ERROR_PAGE} />}
-      >
+      <Route path={Routes.LANDING_PAGE} errorElement={<Navigate to={Routes.ERROR_PAGE} />}>
         <Route path={Routes.LANDING_PAGE} element={<LandingPage />} />
         <Route path={Routes.ERROR_PAGE} element={<ErrorPage />} />
         <Route element={<AuthorizedRoute />}>
-          <Route path={Routes.ALL_PROJECTS_PAGE} element={<AllProjectsPage />} />
-          <Route path={Routes.PROJECT_PAGE} element={<ProjectPage />} />
+          <Route
+            path={Routes.ALL_PROJECTS_PAGE}
+            element={
+              <SuspenseWrapper>
+                <AllProjectsPage />
+              </SuspenseWrapper>
+            }
+          />
+          <Route
+            path={Routes.PROJECT_PAGE}
+            element={
+              <SuspenseWrapper>
+                <ProjectPage />
+              </SuspenseWrapper>
+            }
+          />
         </Route>
       </Route>
     </Route>,

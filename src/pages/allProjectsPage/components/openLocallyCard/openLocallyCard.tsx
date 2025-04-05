@@ -2,16 +2,29 @@ import { Card } from "@/components/ui/card";
 import { Heading } from "@/components/ui/heading";
 
 import { Routes } from "@/router/routes";
+import { projectAtom } from "@/state/projectState";
+import { useSetAtom } from "jotai";
 import { useNavigate } from "react-router-dom";
 import thisDeviceIcon from "./assets/thisDevice.svg";
 
 export const OpenLocallyCard = () => {
   const navigate = useNavigate();
+  const saveFileToState = useSetAtom(projectAtom);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      // save file to app state
+      saveFileToState({
+        project: file,
+        projectMetadata: {
+          id: file.name,
+          name: file.name.split(".")[0],
+          createdTime: new Date().toISOString(),
+          modifiedTime: new Date().toISOString(),
+          owners: [{ displayName: "Local User" }],
+        },
+        projectStorage: "local",
+      });
     }
     navigate(Routes.PROJECT_PAGE);
   };
