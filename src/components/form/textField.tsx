@@ -5,16 +5,17 @@ import { Label } from "../ui/label";
 import { Paragraph } from "../ui/paragraph";
 
 interface TextFieldProps {
-  label: string;
+  label?: string;
+  placeholder?: string;
 }
 
-export const TextField: FC<TextFieldProps> = ({ label }) => {
+export const TextField: FC<TextFieldProps> = ({ label, placeholder }) => {
   const field = useFieldContext<string>();
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-1 flex-col gap-1">
       <div className="flex items-center gap-2">
-        <Label htmlFor={field.name}>{label}</Label>
+        {label && <Label htmlFor={field.name}>{label}</Label>}
         <Input
           id={field.name}
           value={field.state.value}
@@ -22,6 +23,7 @@ export const TextField: FC<TextFieldProps> = ({ label }) => {
             field.handleChange(e.target.value);
           }}
           className={field.state.meta.errors.length > 0 ? "border-red-500" : ""}
+          placeholder={placeholder}
         />
       </div>
       {field.state.meta.errors.length > 0 && (

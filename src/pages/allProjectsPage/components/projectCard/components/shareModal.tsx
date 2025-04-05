@@ -1,5 +1,6 @@
 import {
   getDrivePermissionsListQueryKey,
+  useDrivePermissionsCreate,
   useDrivePermissionsDelete,
   useDrivePermissionsListSuspense,
   useDrivePermissionsUpdate,
@@ -49,23 +50,38 @@ export const ShareModal: FC<ShareModalProps> = ({ projectId, open, setOpen }) =>
     });
   };
 
+  const { mutateAsync: createPermission, isPending } = useDrivePermissionsCreate();
+
   const form = useAppForm({
     defaultValues: {
-      sharedWith:
-        filePermissions?.permissions
-          ?.filter((permission) => permission.type === "user" && permission.role !== "owner")
-          .map((permission) => ({
-            id: permission.id,
-            emailAddress: permission.emailAddress,
-            role: permission.role,
-          })) ?? [],
+      shareWith: "",
+      role: "writer",
     },
     validators: {
       onChange: z.object({
-        sharedWith: z.array(z.object({ id: z.string(), emailAddress: z.string(), role: z.string() })),
+        shareWith: z.string().email("Invalid email address"),
+        role: z.enum(["writer", "reader"], {
+          errorMap: () => ({ message: "Role is required" }),
+        }),
       }),
     },
-    onSubmit: (values) => {},
+    onSubmit: (values) => {
+      createPermission({
+        fileId: projectId,
+        data: {
+          emailAddress: values.value.shareWith,
+          role: values.value.role,
+          type: "user",
+        },
+      })
+        .then(() => {
+          queryClient.invalidateQueries({ queryKey: getDrivePermissionsListQueryKey(projectId) });
+          form.reset();
+        })
+        .catch((error) => {
+          console.error("Error creating permission:", error);
+        });
+    },
   });
 
   return (
@@ -101,16 +117,36 @@ export const ShareModal: FC<ShareModalProps> = ({ projectId, open, setOpen }) =>
               </div>
             </div>
           ))}
+        <Paragraph>Share with a new user:</Paragraph>
         <form
           onSubmit={(e) => {
             e.preventDefault();
             form.handleSubmit();
           }}
-          className="flex flex-col gap-4"
+          className="flex flex-row justify-between gap-8"
         >
-          <Button type="submit" className="w-full" disabled={false}>
-            Share
-          </Button>
+          <form.AppField name="shareWith">{(field) => <field.TextField placeholder="Enter email" />}</form.AppField>
+          <div className="flex gap-4">
+            <form.AppField name="role">
+              {(field) => (
+                <field.SelectField
+                  items={[
+                    {
+                      label: "Writer",
+                      value: "writer",
+                    },
+                    {
+                      label: "Reader",
+                      value: "reader",
+                    },
+                  ]}
+                />
+              )}
+            </form.AppField>
+            <Button type="submit" disabled={isPending} className="w-[88px]">
+              Share
+            </Button>
+          </div>
         </form>
       </DialogContent>
     </Dialog>
