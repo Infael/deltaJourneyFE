@@ -8,6 +8,7 @@ import { projectAtom } from "@/state/projectAtom";
 import { useSetAtom } from "jotai";
 import { FC } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import { z } from "zod";
 
 const newProjectSchema = z.object({
@@ -27,7 +28,6 @@ export const NewProjectForm: FC<NewProjectFormProps> = ({ onCreate }) => {
   const addProjectToState = useSetAtom(projectAtom);
 
   const createNewFile = (name: string) => {
-    console.log(name);
     const fileMetadata = {
       name: `${name}.dj`,
       mimeType: "application/json",
@@ -41,10 +41,17 @@ export const NewProjectForm: FC<NewProjectFormProps> = ({ onCreate }) => {
     const metadataBlob = formData.get("file") as Blob;
     metadataBlob.text().then(console.log);
 
-    createFile({ data: formData, params: { uploadType: "multipart" } }).then((data) => {
-      queryClient.invalidateQueries({ queryKey: getDriveFilesListQueryKey() });
-      onCreate(data.id!);
-    });
+    toast.promise(
+      createFile({ data: formData, params: { uploadType: "multipart" } }).then((data) => {
+        queryClient.invalidateQueries({ queryKey: getDriveFilesListQueryKey() });
+        onCreate(data.id!);
+      }),
+      {
+        loading: "Creating new project...",
+        success: "Project created successfully",
+        error: "Error creating project",
+      },
+    );
   };
 
   const form = useAppForm({

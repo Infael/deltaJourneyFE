@@ -6,6 +6,7 @@ import { useAppForm } from "@/hooks/useForm";
 import { projectAtom } from "@/state/projectAtom";
 import { useAtom } from "jotai";
 import { FC } from "react";
+import { toast } from "sonner";
 import { z } from "zod";
 
 interface RenameModalProps {
@@ -40,25 +41,32 @@ export const RenameModal: FC<RenameModalProps> = ({ projectId, projectName, open
         setOpen(false);
         return;
       }
-      renameFile({
-        fileId: projectId,
-        data: {
-          name: `${values.value.projectName}.dj`,
-        },
-      })
-        .then(() => {
-          queryClient.invalidateQueries({ queryKey: getDriveFilesListQueryKey() });
-          setProjectData((prev) => ({
-            ...prev,
-            projectMetadata: {
-              ...prev.projectMetadata,
-              name: values.value.projectName,
-            },
-          }));
+      toast.promise(
+        renameFile({
+          fileId: projectId,
+          data: {
+            name: `${values.value.projectName}.dj`,
+          },
         })
-        .finally(() => {
-          setOpen(false);
-        });
+          .then(() => {
+            queryClient.invalidateQueries({ queryKey: getDriveFilesListQueryKey() });
+            setProjectData((prev) => ({
+              ...prev,
+              projectMetadata: {
+                ...prev.projectMetadata,
+                name: values.value.projectName,
+              },
+            }));
+          })
+          .finally(() => {
+            setOpen(false);
+          }),
+        {
+          loading: "Renaming project...",
+          success: "Project renamed successfully",
+          error: "Error renaming project",
+        },
+      );
     },
   });
 

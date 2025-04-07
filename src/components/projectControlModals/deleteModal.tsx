@@ -10,6 +10,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { FC } from "react";
+import { toast } from "sonner";
 
 interface DeleteModal {
   projectId: string;
@@ -22,16 +23,23 @@ export const DeleteModal: FC<DeleteModal> = ({ projectId, open, setOpen, onDelet
   const { mutateAsync: deleteFile, isPending } = useDriveFilesDelete();
 
   const handleDelete = () => {
-    deleteFile({ fileId: projectId })
-      .then(() => {
-        queryClient.invalidateQueries({ queryKey: getDriveFilesListQueryKey() });
-      })
-      .finally(() => {
-        setOpen(false);
-        if (onDelete) {
-          onDelete();
-        }
-      });
+    toast.promise(
+      deleteFile({ fileId: projectId })
+        .then(() => {
+          queryClient.invalidateQueries({ queryKey: getDriveFilesListQueryKey() });
+        })
+        .finally(() => {
+          setOpen(false);
+          if (onDelete) {
+            onDelete();
+          }
+        }),
+      {
+        loading: "Deleting project...",
+        success: "Project deleted successfully",
+        error: "Error deleting project",
+      },
+    );
   };
 
   return (

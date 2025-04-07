@@ -5,6 +5,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider } from "react-router-dom";
 import { queryClient } from "./api/queryClient";
+import { Toaster } from "./components/ui/sonner";
 import { Router } from "./router/router";
 
 import "./index.css";
@@ -17,6 +18,7 @@ createRoot(document.getElementById("root")!).render(
       <GoogleOAuthProvider clientId={CLIENT_ID}>
         <ReactQueryDevtools initialIsOpen={false} />
         <RouterProvider router={Router} />
+        <Toaster />
       </GoogleOAuthProvider>
     </QueryClientProvider>
   </StrictMode>,

@@ -12,6 +12,7 @@ import { Paragraph } from "@/components/ui/paragraph";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAppForm } from "@/hooks/useForm";
 import { FC } from "react";
+import { toast } from "sonner";
 import { z } from "zod";
 
 interface ShareModalProps {
@@ -28,26 +29,40 @@ export const ShareModal: FC<ShareModalProps> = ({ projectId, open, setOpen }) =>
   const { mutateAsync: updatePermission } = useDrivePermissionsUpdate();
 
   const handleUpdatePermission = (permissionId: string, role: string) => {
-    updatePermission({
-      fileId: projectId,
-      permissionId,
-      data: {
-        role: role,
+    toast.promise(
+      updatePermission({
+        fileId: projectId,
+        permissionId,
+        data: {
+          role: role,
+        },
+      }).then(() => {
+        queryClient.invalidateQueries({ queryKey: getDrivePermissionsListQueryKey(projectId) });
+      }),
+      {
+        success: "Permission updated successfully",
+        error: "Error updating permission",
+        loading: "Updating permission...",
       },
-    }).then(() => {
-      queryClient.invalidateQueries({ queryKey: getDrivePermissionsListQueryKey(projectId) });
-    });
+    );
   };
 
   const { mutateAsync: deletePermission } = useDrivePermissionsDelete();
 
   const handleDeletePermission = (permissionId: string) => {
-    deletePermission({
-      fileId: projectId,
-      permissionId,
-    }).then(() => {
-      queryClient.invalidateQueries({ queryKey: getDrivePermissionsListQueryKey(projectId) });
-    });
+    toast.promise(
+      deletePermission({
+        fileId: projectId,
+        permissionId,
+      }).then(() => {
+        queryClient.invalidateQueries({ queryKey: getDrivePermissionsListQueryKey(projectId) });
+      }),
+      {
+        success: "Permission removed successfully",
+        error: "Error removing permission",
+        loading: "Removing permission...",
+      },
+    );
   };
 
   const { mutateAsync: createPermission, isPending } = useDrivePermissionsCreate();
@@ -66,21 +81,24 @@ export const ShareModal: FC<ShareModalProps> = ({ projectId, open, setOpen }) =>
       }),
     },
     onSubmit: (values) => {
-      createPermission({
-        fileId: projectId,
-        data: {
-          emailAddress: values.value.shareWith,
-          role: values.value.role,
-          type: "user",
-        },
-      })
-        .then(() => {
+      toast.promise(
+        createPermission({
+          fileId: projectId,
+          data: {
+            emailAddress: values.value.shareWith,
+            role: values.value.role,
+            type: "user",
+          },
+        }).then(() => {
           queryClient.invalidateQueries({ queryKey: getDrivePermissionsListQueryKey(projectId) });
           form.reset();
-        })
-        .catch((error) => {
-          console.error("Error creating permission:", error);
-        });
+        }),
+        {
+          success: "Shared successfully",
+          error: "Error sharing",
+          loading: "Sharing...",
+        },
+      );
     },
   });
 
