@@ -1,5 +1,5 @@
 import { Heading } from "@/components/ui/heading";
-import { projectAtom } from "@/state/projectState";
+import { projectAtom } from "@/state/projectAtom";
 import { useAtomValue } from "jotai";
 import { FC } from "react";
 import { ControlBarMenu } from "./controlBarMenu/controlBarMenu";

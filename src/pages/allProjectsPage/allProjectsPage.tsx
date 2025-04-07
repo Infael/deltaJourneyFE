@@ -1,7 +1,7 @@
 import { useDriveFilesListSuspense } from "@/api/driveApi/drive-api";
 import { Heading } from "@/components/ui/heading";
 import { Routes } from "@/router/routes";
-import { initialProjectState, projectAtom } from "@/state/projectState";
+import { initialProjectState, projectAtom } from "@/state/projectAtom";
 import { useSetAtom } from "jotai";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";

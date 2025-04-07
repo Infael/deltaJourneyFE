@@ -3,7 +3,7 @@ import { queryClient } from "@/api/queryClient";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useAppForm } from "@/hooks/useForm";
-import { projectAtom } from "@/state/projectState";
+import { projectAtom } from "@/state/projectAtom";
 import { useAtom } from "jotai";
 import { FC } from "react";
 import { z } from "zod";

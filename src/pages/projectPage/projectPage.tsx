@@ -1,6 +1,6 @@
 import { useDriveFilesGet } from "@/api/driveApi/drive-api";
 import { Spinner } from "@/components/ui/spinner/spinner";
-import { projectAtom } from "@/state/projectState";
+import { projectAtom } from "@/state/projectAtom";
 import { useAtom } from "jotai";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";

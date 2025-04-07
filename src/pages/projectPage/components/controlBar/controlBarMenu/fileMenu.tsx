@@ -14,8 +14,9 @@ import {
   MenubarSubTrigger,
   MenubarTrigger,
 } from "@/components/ui/menubar";
+import { downloadDjFile } from "@/lib/downloadDjFile";
 import { Routes } from "@/router/routes";
-import { projectAtom } from "@/state/projectState";
+import { projectAtom } from "@/state/projectAtom";
 import { useAtomValue } from "jotai";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -29,7 +30,7 @@ export const FileMenu = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
 
-  const { projectMetadata, projectStorage } = useAtomValue(projectAtom);
+  const { project, projectMetadata, projectStorage } = useAtomValue(projectAtom);
 
   return (
     <>
@@ -58,7 +59,7 @@ export const FileMenu = () => {
             <MenubarSubContent>
               <MenubarItem>PNG</MenubarItem>
               <MenubarItem>PDF</MenubarItem>
-              <MenubarItem>DeltaJourney</MenubarItem>
+              <MenubarItem onClick={() => downloadDjFile(project, projectMetadata.name)}>DeltaJourney</MenubarItem>
             </MenubarSubContent>
           </MenubarSub>
         </MenubarContent>

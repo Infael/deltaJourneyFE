@@ -2,7 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Heading } from "@/components/ui/heading";
 
 import { Routes } from "@/router/routes";
-import { projectAtom } from "@/state/projectState";
+import { projectAtom } from "@/state/projectAtom";
 import { useSetAtom } from "jotai";
 import { useNavigate } from "react-router-dom";
 import thisDeviceIcon from "./assets/thisDevice.svg";

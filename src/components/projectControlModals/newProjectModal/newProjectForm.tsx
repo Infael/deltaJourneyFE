@@ -4,7 +4,7 @@ import { queryClient } from "@/api/queryClient";
 import { Button } from "@/components/ui/button";
 import { useAppForm } from "@/hooks/useForm";
 import { Routes } from "@/router/routes";
-import { projectAtom } from "@/state/projectState";
+import { projectAtom } from "@/state/projectAtom";
 import { useSetAtom } from "jotai";
 import { FC } from "react";
 import { useNavigate } from "react-router-dom";
