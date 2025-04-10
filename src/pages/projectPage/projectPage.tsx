@@ -1,10 +1,12 @@
 import { useDriveFilesGet } from "@/api/driveApi/drive-api";
 import { Spinner } from "@/components/ui/spinner/spinner";
+import { Project } from "@/lib/project/models/project";
 import { projectAtom } from "@/state/projectAtom";
 import { useAtom } from "jotai";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { ControlBar } from "./components/controlBar/controlBar";
+import { MapRenderer } from "./components/mapRenderer/mapRenderer";
 
 export const ProjectPage = () => {
   const { state } = useLocation();
@@ -15,9 +17,13 @@ export const ProjectPage = () => {
   const getFile = (projectId: string) => {
     getDriveFile({ fileId: projectId, params: { alt: "media" } })
       .then((data) => {
+        const project = data as Project;
         setProjectData((prev) => ({
           ...prev,
-          project: data,
+          actualShowedVersion: project.versions.toSorted(
+            (a, b) => new Date(a.createdTime).getTime() - new Date(b.createdTime).getTime(),
+          )[0].id,
+          project: project,
           projectStorage: "drive",
         }));
       })
@@ -63,6 +69,7 @@ export const ProjectPage = () => {
   return (
     <div>
       <ControlBar />
+      <MapRenderer />
     </div>
   );
 };

@@ -3,6 +3,7 @@ import { getDriveFilesListQueryKey } from "@/api/driveApi/drive-api";
 import { queryClient } from "@/api/queryClient";
 import { Button } from "@/components/ui/button";
 import { useAppForm } from "@/hooks/useForm";
+import { createEmptyProject, projectToJSON } from "@/lib/project/services/ProjectService";
 import { Routes } from "@/router/routes";
 import { projectAtom } from "@/state/projectAtom";
 import { useSetAtom } from "jotai";
@@ -32,7 +33,7 @@ export const NewProjectForm: FC<NewProjectFormProps> = ({ onCreate }) => {
       name: `${name}.dj`,
       mimeType: "application/json",
     };
-    const fileContent = JSON.stringify({ message: "Hello world" });
+    const fileContent = projectToJSON(createEmptyProject(name));
 
     const formData = new FormData();
     formData.append("metadata", new Blob([JSON.stringify(fileMetadata)], { type: "application/json" }));
