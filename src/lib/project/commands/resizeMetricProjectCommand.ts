@@ -1,36 +1,33 @@
 import { Project } from "../models/project";
 import { ProjectCommand } from "./projectCommand";
 
-const DEFAULT_TOUCHPOINT_WIDTH = 100;
-
 interface CommandData {
-  name: string;
+  newHeight: number;
   versionId: string;
+  metricId: string;
 }
 
-export class AddTouchpointProjectCommand implements ProjectCommand<CommandData> {
+export class ResizeMetricProjectCommand implements ProjectCommand<CommandData> {
   execute(project: Project, data: CommandData): Project {
-    const newTouchpoint = {
-      id: crypto.randomUUID(),
-      name: data.name,
-      createdTime: new Date().toISOString(),
-      modifiedTime: new Date().toISOString(),
-      description: "",
-      metrics: [],
-      width: DEFAULT_TOUCHPOINT_WIDTH,
-    };
-
     const versionIndex = project.versions.findIndex((version) => version.id === data.versionId);
     if (versionIndex === -1) {
       throw new Error("Version not found");
     }
 
+    const updatedMetrics = project.versions[versionIndex].metrics.map((metric) => {
+      if (metric.id === data.metricId) {
+        return {
+          ...metric,
+          height: data.newHeight,
+        };
+      }
+      return metric;
+    });
     const updatedVersion = {
       ...project.versions[versionIndex],
-      touchpoints: [...project.versions[versionIndex].touchpoints, newTouchpoint],
+      metrics: updatedMetrics,
       modifiedTime: new Date().toISOString(),
     };
-
     const updatedVersions = [...project.versions];
     updatedVersions[versionIndex] = updatedVersion;
     return {

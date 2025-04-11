@@ -5,12 +5,12 @@ import { projectAtom } from "@/state/projectAtom";
 import { useAtom } from "jotai";
 
 export const ControlBarVersionControl = () => {
-  const [project, setProject] = useAtom(projectAtom);
+  const [{ current }, setProject] = useAtom(projectAtom);
 
   return (
     <div className="flex gap-4">
       <Select
-        defaultValue={project.actualShowedVersion}
+        defaultValue={current.actualShowedVersion}
         onValueChange={(value) => setProject((prev) => ({ ...prev, actualShowedVersion: value }))}
       >
         <SelectTrigger>
@@ -18,7 +18,7 @@ export const ControlBarVersionControl = () => {
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
-            {project.project.versions.map((version) => (
+            {current.project.versions.map((version) => (
               <SelectItem key={version.id} value={version.id}>
                 {version.name}
               </SelectItem>
@@ -30,8 +30,8 @@ export const ControlBarVersionControl = () => {
         variant="noShadow"
         onClick={() => {
           setProject((prev) => {
-            const newProject = new CreateNewVersionProjectCommand().execute(prev.project, {
-              name: `Version ${prev.project.versions.length + 1}`,
+            const newProject = new CreateNewVersionProjectCommand().execute(prev.current.project, {
+              name: `Version ${prev.current.project.versions.length + 1}`,
             });
             return {
               ...prev,

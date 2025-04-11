@@ -2,6 +2,8 @@ import { MetricType } from "../models/metrics";
 import { Metric, Project } from "../models/project";
 import { ProjectCommand } from "./projectCommand";
 
+const DEFAULT_METRIC_HEIGHT = 100;
+
 interface CommandData {
   name: string;
   metricKey: MetricType;
@@ -11,8 +13,10 @@ interface CommandData {
 export class AddMetricProjectCommand implements ProjectCommand<CommandData> {
   execute(project: Project, data: CommandData): Project {
     const newMetric: Metric = {
+      id: crypto.randomUUID(),
       label: data.name,
       key: data.metricKey,
+      height: DEFAULT_METRIC_HEIGHT,
     };
 
     const versionIndex = project.versions.findIndex((version) => version.id === data.versionId);

@@ -20,11 +20,14 @@ export const ProjectPage = () => {
         const project = data as Project;
         setProjectData((prev) => ({
           ...prev,
-          actualShowedVersion: project.versions.toSorted(
-            (a, b) => new Date(a.createdTime).getTime() - new Date(b.createdTime).getTime(),
-          )[0].id,
-          project: project,
-          projectStorage: "drive",
+          current: {
+            ...prev.current,
+            project: project,
+            actualShowedVersion: project.versions.toSorted(
+              (a, b) => new Date(a.createdTime).getTime() - new Date(b.createdTime).getTime(),
+            )[0].id,
+            projectStorage: "drive",
+          },
         }));
       })
       .catch((error) => {
@@ -36,14 +39,17 @@ export const ProjectPage = () => {
       .then((data) => {
         setProjectData((prev) => ({
           ...prev,
-          projectMetadata: {
-            name: data.name!.split(".")[0],
-            id: data.id!,
-            createdTime: data.createdTime!,
-            modifiedTime: data.modifiedTime!,
-            owners: data.owners!,
+          current: {
+            ...prev.current,
+            projectMetadata: {
+              id: data.id!,
+              name: data.name!,
+              createdTime: data.createdTime!,
+              modifiedTime: data.modifiedTime!,
+              owners: data.owners!,
+            },
+            projectStorage: "drive",
           },
-          projectStorage: "drive",
         }));
       })
       .catch((error) => {
@@ -52,7 +58,7 @@ export const ProjectPage = () => {
   };
 
   useEffect(() => {
-    if (projectData.projectStorage !== "local" && state.fileMetadata.id) {
+    if (projectData.current.projectStorage !== "local" && state.fileMetadata.id) {
       getFile(state.fileMetadata.id);
       getFileMetadata(state.fileMetadata.id);
     }

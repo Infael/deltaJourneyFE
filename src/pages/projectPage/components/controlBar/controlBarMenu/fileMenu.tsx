@@ -30,7 +30,9 @@ export const FileMenu = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
 
-  const { project, projectMetadata, projectStorage } = useAtomValue(projectAtom);
+  const {
+    current: { project, projectMetadata, projectStorage },
+  } = useAtomValue(projectAtom);
 
   return (
     <>

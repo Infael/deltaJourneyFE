@@ -4,16 +4,18 @@ import { projectAtom } from "@/state/projectAtom";
 import { useAtom, useAtomValue } from "jotai";
 import { useMemo } from "react";
 
-import { Paragraph } from "@/components/ui/paragraph";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { AddMetricProjectCommand } from "@/lib/project/commands/addMetricProjectCommand";
-import { AddTouchpointProjectCommand } from "@/lib/project/commands/addTouchpointProjectCommand";
-import { MetricType } from "@/lib/project/models/metrics";
 import { ViewAtom } from "@/state/viewAtom";
-import plusIcon from "./assets/plusIcon.svg";
+import { MapCell } from "./components/mapCell";
+import { NewMetricButton } from "./components/newMetricButton";
+import { NewTouchpointButton } from "./components/newTouchpointButton";
 
 export const MapRenderer = () => {
-  const [{ project, actualShowedVersion }, setProject] = useAtom(projectAtom);
+  const [
+    {
+      current: { project, actualShowedVersion },
+    },
+  ] = useAtom(projectAtom);
   const { showedHud } = useAtomValue(ViewAtom);
 
   const versionData = useMemo<ProjectVersion | undefined>(() => {
@@ -32,58 +34,29 @@ export const MapRenderer = () => {
     <div className="flex py-4 pl-8">
       <ScrollArea className={showedHud ? "h-[calc(100vh-280px)]" : "h-[calc(100vh-120px)]"}>
         <div className="bg-bw flex max-w-max rounded-md border-2">
-          <div className="grid" style={{ gridTemplateColumns: `repeat(${versionData.touchpoints.length + 1}, 1fr)` }}>
-            <div className="p-4 outline">
+          <div className="grid" style={{ gridTemplateColumns: `repeat(${versionData.touchpoints.length}, auto) 1fr` }}>
+            <MapCell>
               <h3 className="text-lg font-bold">Touchpoints</h3>
-            </div>
+            </MapCell>
             {versionData.touchpoints.map((touchpoint) => (
-              <div key={touchpoint.id} className="flex flex-col items-center gap-4 p-4 outline">
+              <MapCell key={touchpoint.id} resizeVertical id={touchpoint.id} width={touchpoint.width}>
                 <h3 className="text-lg font-bold">{touchpoint.name}</h3>
-              </div>
+              </MapCell>
             ))}
             {versionData.metrics.map((metric) => (
-              <div
-                key={metric.label}
-                className="h-23 outline"
-                style={{ gridColumn: `span ${versionData.touchpoints.length + 1}` }}
+              <MapCell
+                key={metric.id}
+                resizeHorizontal
+                gridSize={versionData.touchpoints.length + 1}
+                id={metric.id}
+                height={metric.height}
               >
                 {metric.label}
-              </div>
+              </MapCell>
             ))}
-            <div
-              className="hover:bg-main flex h-50 flex-col items-center gap-4 p-4 outline hover:cursor-pointer"
-              style={{ gridColumn: `span ${versionData.touchpoints.length + 1}` }}
-              onClick={() => {
-                setProject((prev) => {
-                  const newProject = new AddMetricProjectCommand().execute(prev.project, {
-                    name: "New Metric",
-                    versionId: actualShowedVersion,
-                    metricKey: MetricType.TEXT,
-                  });
-                  return { ...prev, project: newProject };
-                });
-              }}
-            >
-              <img src={plusIcon} alt="add new Metric" className="h-32" />
-              <Paragraph>New Metric</Paragraph>
-            </div>
+            <NewMetricButton gridSize={versionData.touchpoints.length + 1} />
           </div>
-
-          <div
-            className="hover:bg-main flex w-42 flex-col items-center gap-4 p-4 outline hover:cursor-pointer"
-            onClick={() => {
-              setProject((prev) => {
-                const newProject = new AddTouchpointProjectCommand().execute(prev.project, {
-                  name: "New touchpoint",
-                  versionId: actualShowedVersion,
-                });
-                return { ...prev, project: newProject };
-              });
-            }}
-          >
-            <img src={plusIcon} alt="add new touchpoint" />
-            <Paragraph>New Touchpoint</Paragraph>
-          </div>
+          <NewTouchpointButton />
         </div>
         <ScrollBar orientation="horizontal" />
       </ScrollArea>

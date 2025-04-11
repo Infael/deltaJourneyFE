@@ -23,8 +23,10 @@ export interface ProjectVersion {
 }
 
 export interface Metric {
+  id: string;
   key: MetricType;
   label: string;
+  height: number;
 }
 
 export interface Touchpoint {
@@ -33,6 +35,7 @@ export interface Touchpoint {
   createdTime: string;
   modifiedTime: string;
   description: string;
+  width: number;
 
   metrics: Metric[];
 }

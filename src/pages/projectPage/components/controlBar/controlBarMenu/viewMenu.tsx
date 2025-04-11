@@ -57,6 +57,7 @@ export const ViewMenu = () => {
               setViewAtom((prev) => ({
                 ...prev,
                 showedHud: false,
+                presentationMode: true,
               }));
             } else {
               setFullscreen(false);
@@ -64,6 +65,7 @@ export const ViewMenu = () => {
               setViewAtom((prev) => ({
                 ...prev,
                 showedHud: true,
+                presentationMode: false,
               }));
             }
           }}

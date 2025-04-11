@@ -6,7 +6,9 @@ import { ControlBarMenu } from "./controlBarMenu/controlBarMenu";
 import { ControlBarVersionControl } from "./controlBarVersionControl/controlBarVersionControl";
 
 export const ControlBar: FC = () => {
-  const { projectMetadata } = useAtomValue(projectAtom);
+  const {
+    current: { projectMetadata },
+  } = useAtomValue(projectAtom);
 
   return (
     <div className="bg-bw flex w-full items-center justify-between border-b-4 px-8 py-4">
