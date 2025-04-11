@@ -2,16 +2,20 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CreateNewVersionProjectCommand } from "@/lib/project/commands/createNewVersionProjectCommand";
 import { projectAtom } from "@/state/projectAtom";
-import { useAtom } from "jotai";
+import { projectWriteAtom } from "@/state/projectWriteAtom";
+import { useAtom, useSetAtom } from "jotai";
 
 export const ControlBarVersionControl = () => {
   const [{ current }, setProject] = useAtom(projectAtom);
+  const updateProject = useSetAtom(projectWriteAtom);
 
   return (
     <div className="flex gap-4">
       <Select
         defaultValue={current.actualShowedVersion}
-        onValueChange={(value) => setProject((prev) => ({ ...prev, actualShowedVersion: value }))}
+        onValueChange={(value) =>
+          setProject((prev) => ({ ...prev, current: { ...prev.current, actualShowedVersion: value } }))
+        }
       >
         <SelectTrigger>
           <SelectValue placeholder="Last Version" />
@@ -29,9 +33,9 @@ export const ControlBarVersionControl = () => {
       <Button
         variant="noShadow"
         onClick={() => {
-          setProject((prev) => {
-            const newProject = new CreateNewVersionProjectCommand().execute(prev.current.project, {
-              name: `Version ${prev.current.project.versions.length + 1}`,
+          updateProject((prev) => {
+            const newProject = new CreateNewVersionProjectCommand().execute(prev.project, {
+              name: `Version ${prev.project.versions.length + 1}`,
             });
             return {
               ...prev,

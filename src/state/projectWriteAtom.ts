@@ -1,5 +1,6 @@
 import { atom } from "jotai";
 import { ProjectState, projectAtom } from "./projectAtom";
+import { saveAtom } from "./saveAtom";
 
 export const projectWriteAtom = atom(null, (get, set, updateFn: (prev: ProjectState) => ProjectState) => {
   const { current, past } = get(projectAtom);
@@ -11,6 +12,7 @@ export const projectWriteAtom = atom(null, (get, set, updateFn: (prev: ProjectSt
     past: [...past, current], // add to history
     future: [], // clear future when making a new change
   });
+  set(saveAtom, false);
 });
 
 export const projectUndoAtom = atom(null, (get, set) => {
@@ -26,6 +28,7 @@ export const projectUndoAtom = atom(null, (get, set) => {
     past: newPast,
     future: [current, ...future],
   });
+  set(saveAtom, false);
 });
 
 export const projectRedoAtom = atom(null, (get, set) => {
@@ -41,6 +44,7 @@ export const projectRedoAtom = atom(null, (get, set) => {
     past: [...past, current],
     future: newFuture,
   });
+  set(saveAtom, false);
 });
 
 export const canUndoAtom = atom((get) => {

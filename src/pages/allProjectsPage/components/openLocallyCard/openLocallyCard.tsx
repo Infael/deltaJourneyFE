@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Heading } from "@/components/ui/heading";
 
+import { Project } from "@/lib/project/models/project";
 import { Routes } from "@/router/routes";
 import { projectAtom } from "@/state/projectAtom";
 import { useSetAtom } from "jotai";
@@ -14,19 +15,31 @@ export const OpenLocallyCard = () => {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      saveFileToState({
-        project: file,
-        projectMetadata: {
-          id: file.name,
-          name: file.name.split(".")[0],
-          createdTime: new Date().toISOString(),
-          modifiedTime: new Date().toISOString(),
-          owners: [{ displayName: "Local User" }],
-        },
-        projectStorage: "local",
-      });
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        const project = JSON.parse(e.target?.result as string) as unknown as Project;
+        saveFileToState({
+          current: {
+            project: project,
+            projectMetadata: {
+              id: file.name,
+              name: file.name.split(".")[0],
+              createdTime: new Date().toISOString(),
+              modifiedTime: new Date().toISOString(),
+              owners: [{ displayName: "Local User" }],
+            },
+            projectStorage: "local",
+            actualShowedVersion: project.versions[0].id,
+          },
+          past: [],
+          future: [],
+        });
+        navigate(Routes.PROJECT_PAGE);
+      };
+
+      reader.readAsText(file);
     }
-    navigate(Routes.PROJECT_PAGE);
   };
 
   return (

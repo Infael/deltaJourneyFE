@@ -30,3 +30,32 @@ export const useUploadDriveFileCreate = () => {
     ...mutationOptions,
   });
 };
+
+const driveFileUpdate = (fileId: string, fileWithMetadata: FormData, params?: DriveFilesCreateParams) => {
+  return fetchClient<File>({
+    url: `https://www.googleapis.com/upload/drive/v3/files/${fileId}`,
+    method: "PATCH",
+    data: fileWithMetadata,
+    params: params,
+  });
+};
+
+export const useUploadDriveFileUpdate = () => {
+  const mutationKey = ["uploadDriveFileUpdate"];
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof driveFileUpdate>>,
+    { fileId: string; data: FormData; params?: DriveFilesCreateParams }
+  > = (props) => {
+    const { fileId, data, params } = props ?? {};
+
+    return driveFileUpdate(fileId, data, params);
+  };
+  const mutationOptions = {
+    mutationKey,
+    mutationFn,
+  };
+
+  return useMutation({
+    ...mutationOptions,
+  });
+};

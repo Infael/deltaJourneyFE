@@ -39,9 +39,6 @@ export const NewProjectForm: FC<NewProjectFormProps> = ({ onCreate }) => {
     formData.append("metadata", new Blob([JSON.stringify(fileMetadata)], { type: "application/json" }));
     formData.append("file", new File([fileContent], `${name}.dj`, { type: "application/json" }));
 
-    const metadataBlob = formData.get("file") as Blob;
-    metadataBlob.text().then(console.log);
-
     toast.promise(
       createFile({ data: formData, params: { uploadType: "multipart" } }).then((data) => {
         queryClient.invalidateQueries({ queryKey: getDriveFilesListQueryKey() });
@@ -65,16 +62,23 @@ export const NewProjectForm: FC<NewProjectFormProps> = ({ onCreate }) => {
     },
     onSubmit: (values) => {
       if (values.value.storage === "local") {
+        const newProject = createEmptyProject(values.value.projectName);
+
         addProjectToState({
-          project: {},
-          projectMetadata: {
-            id: "",
-            name: values.value.projectName,
-            createdTime: new Date().toISOString(),
-            modifiedTime: new Date().toISOString(),
-            owners: [],
+          current: {
+            project: newProject,
+            projectMetadata: {
+              id: "",
+              name: values.value.projectName,
+              createdTime: new Date().toISOString(),
+              modifiedTime: new Date().toISOString(),
+              owners: [],
+            },
+            projectStorage: "local",
+            actualShowedVersion: newProject.versions[0].id,
           },
-          projectStorage: "local",
+          past: [],
+          future: [],
         });
         navigate(Routes.PROJECT_PAGE);
       } else if (values.value.storage === "drive") {

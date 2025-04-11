@@ -30,11 +30,11 @@ export const RenameModal: FC<RenameModalProps> = ({ projectId, projectName, open
       }),
     },
     onSubmit: (values) => {
-      if (projectData.projectStorage === "local") {
+      if (projectData.current.projectStorage === "local") {
         setProjectData((prev) => ({
           ...prev,
           projectMetadata: {
-            ...prev.projectMetadata,
+            ...prev.current.projectMetadata,
             name: values.value.projectName,
           },
         }));
@@ -53,7 +53,7 @@ export const RenameModal: FC<RenameModalProps> = ({ projectId, projectName, open
             setProjectData((prev) => ({
               ...prev,
               projectMetadata: {
-                ...prev.projectMetadata,
+                ...prev.current.projectMetadata,
                 name: values.value.projectName,
               },
             }));

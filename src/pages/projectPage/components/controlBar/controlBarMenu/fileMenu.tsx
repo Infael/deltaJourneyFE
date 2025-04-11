@@ -14,6 +14,7 @@ import {
   MenubarSubTrigger,
   MenubarTrigger,
 } from "@/components/ui/menubar";
+import { useProjectSave } from "@/hooks/useProjectSave";
 import { downloadDjFile } from "@/lib/downloadDjFile";
 import { Routes } from "@/router/routes";
 import { projectAtom } from "@/state/projectAtom";
@@ -34,6 +35,8 @@ export const FileMenu = () => {
     current: { project, projectMetadata, projectStorage },
   } = useAtomValue(projectAtom);
 
+  const { savedProject, save } = useProjectSave();
+
   return (
     <>
       <MenubarMenu>
@@ -41,7 +44,7 @@ export const FileMenu = () => {
         <MenubarContent>
           <MenubarItem onClick={() => setNewProjectOpen(true)}>New Project</MenubarItem>
           <MenubarSeparator />
-          <MenubarItem>
+          <MenubarItem onClick={save} disabled={savedProject}>
             Save <MenubarShortcut>⌘S</MenubarShortcut>
           </MenubarItem>
           <MenubarItem onClick={() => setMoreInfoModalOpen(true)}>More Info</MenubarItem>
