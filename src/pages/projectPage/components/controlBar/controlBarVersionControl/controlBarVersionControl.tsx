@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CreateNewVersionProjectCommand } from "@/lib/project/commands/createNewVersionProjectCommand";
+import { createNewVersionProjectCommand } from "@/lib/project/commands/createNewVersionProjectCommand";
 import { projectAtom } from "@/state/projectAtom";
 import { projectWriteAtom } from "@/state/projectWriteAtom";
 import { useAtom, useSetAtom } from "jotai";
@@ -34,7 +34,7 @@ export const ControlBarVersionControl = () => {
         variant="noShadow"
         onClick={() => {
           updateProject((prev) => {
-            const newProject = new CreateNewVersionProjectCommand().execute(prev.project, {
+            const newProject = createNewVersionProjectCommand(prev.project, {
               name: `Version ${prev.project.versions.length + 1}`,
             });
             return {

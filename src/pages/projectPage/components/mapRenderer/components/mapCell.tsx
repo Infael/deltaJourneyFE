@@ -1,5 +1,5 @@
-import { ResizeMetricProjectCommand } from "@/lib/project/commands/resizeMetricProjectCommand";
-import { ResizeTouchpointProjectCommand } from "@/lib/project/commands/resizeTouchpointProjectCommand";
+import { resizeMetricProjectCommand } from "@/lib/project/commands/resizeMetricProjectCommand";
+import { resizeTouchpointProjectCommand } from "@/lib/project/commands/resizeTouchpointProjectCommand";
 import { cn } from "@/lib/utils";
 import { projectWriteAtom } from "@/state/projectWriteAtom";
 import { useSetAtom } from "jotai";
@@ -36,7 +36,7 @@ export const MapCell: FC<MapCellProps> = ({
       if (resizeVertical) {
         const newWidth = Math.round(rect.width);
         updateProject((prev) => {
-          const newProject = new ResizeTouchpointProjectCommand().execute(prev.project, {
+          const newProject = resizeTouchpointProjectCommand(prev.project, {
             versionId: prev.actualShowedVersion,
             touchpointId: id,
             newWidth: newWidth,
@@ -51,7 +51,7 @@ export const MapCell: FC<MapCellProps> = ({
       if (resizeHorizontal) {
         const newHeight = Math.round(rect.height);
         updateProject((prev) => {
-          const newProject = new ResizeMetricProjectCommand().execute(prev.project, {
+          const newProject = resizeMetricProjectCommand(prev.project, {
             versionId: prev.actualShowedVersion,
             metricId: id,
             newHeight: newHeight,

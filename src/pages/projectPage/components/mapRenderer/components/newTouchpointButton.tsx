@@ -1,5 +1,5 @@
 import { Paragraph } from "@/components/ui/paragraph";
-import { AddTouchpointProjectCommand } from "@/lib/project/commands/addTouchpointProjectCommand";
+import { addTouchpointProjectCommand } from "@/lib/project/commands/addTouchpointProjectCommand";
 import { useAtomValue, useSetAtom } from "jotai";
 import { MapCell } from "./mapCell";
 
@@ -21,7 +21,7 @@ export const NewTouchpointButton = () => {
         className="flex h-full w-full flex-col items-center gap-4 p-4"
         onClick={() => {
           updateProject((prev) => {
-            const newProject = new AddTouchpointProjectCommand().execute(prev.project, {
+            const newProject = addTouchpointProjectCommand(prev.project, {
               name: "New Touchpoint",
               versionId: prev.actualShowedVersion,
             });
