@@ -8,13 +8,13 @@ import {
   MenubarTrigger,
 } from "@/components/ui/menubar";
 import { exitFullscreen, startFullscreen } from "@/lib/fullscreenUtils";
-import { ViewAtom } from "@/state/viewAtom";
+import { viewAtom } from "@/state/viewAtom";
 import { useAtom } from "jotai";
 import { useState } from "react";
 
 export const ViewMenu = () => {
   const [fullscreen, setFullscreen] = useState(false);
-  const [viewAtom, setViewAtom] = useAtom(ViewAtom);
+  const [view, setViewAtom] = useAtom(viewAtom);
 
   const toggleHud = () => {
     setViewAtom((prev) => ({
@@ -45,13 +45,13 @@ export const ViewMenu = () => {
         >
           Fullscreen
         </MenubarCheckboxItem>
-        <MenubarCheckboxItem checked={viewAtom.showedHud} onClick={toggleHud}>
+        <MenubarCheckboxItem checked={view.showedHud} onClick={toggleHud}>
           Header & Footer
         </MenubarCheckboxItem>
         <MenubarCheckboxItem
-          checked={fullscreen && !viewAtom.showedHud}
+          checked={fullscreen && !view.showedHud}
           onClick={() => {
-            if (!fullscreen || viewAtom.showedHud) {
+            if (!fullscreen || view.showedHud) {
               setFullscreen(true);
               startFullscreen();
               setViewAtom((prev) => ({

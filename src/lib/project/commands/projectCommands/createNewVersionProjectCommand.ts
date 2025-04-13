@@ -1,4 +1,4 @@
-import { Project } from "../models/project";
+import { Project } from "../../models/project";
 
 export const createNewVersionProjectCommand = (project: Project, data: { name: string }): Project => {
   const newVersion = {

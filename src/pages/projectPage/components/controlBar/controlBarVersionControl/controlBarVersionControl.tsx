@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { createNewVersionProjectCommand } from "@/lib/project/commands/createNewVersionProjectCommand";
+import { createNewVersionProjectCommand } from "@/lib/project/commands/projectCommands/createNewVersionProjectCommand";
 import { projectAtom } from "@/state/projectAtom";
 import { projectWriteAtom } from "@/state/projectWriteAtom";
 import { useAtom, useSetAtom } from "jotai";

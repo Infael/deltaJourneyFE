@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { Project } from "../models/project";
+import { Project } from "../../models/project";
 import { createNewVersionProjectCommand } from "./createNewVersionProjectCommand";
 
 describe("createNewVersionProjectCommand", () => {

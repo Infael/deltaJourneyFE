@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { Project } from "../models/project";
+import { Project } from "../../models/project";
 import { renameProjectCommand } from "./renameProjectCommand";
 
 describe("renameProjectCommand", () => {

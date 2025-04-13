@@ -5,10 +5,11 @@ import { useAtom, useAtomValue } from "jotai";
 import { useMemo } from "react";
 
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { ViewAtom } from "@/state/viewAtom";
+import { viewAtom } from "@/state/viewAtom";
 import { MapCell } from "./components/mapCell";
 import { NewMetricButton } from "./components/newMetricButton";
 import { NewTouchpointButton } from "./components/newTouchpointButton";
+import { Touchpoint } from "./components/touchpoint";
 
 export const MapRenderer = () => {
   const [
@@ -16,7 +17,7 @@ export const MapRenderer = () => {
       current: { project, actualShowedVersion },
     },
   ] = useAtom(projectAtom);
-  const { showedHud } = useAtomValue(ViewAtom);
+  const { showedHud } = useAtomValue(viewAtom);
 
   const versionData = useMemo<ProjectVersion | undefined>(() => {
     return project.versions.find((v) => v.id === actualShowedVersion);
@@ -40,7 +41,7 @@ export const MapRenderer = () => {
             </MapCell>
             {versionData.touchpoints.map((touchpoint) => (
               <MapCell key={touchpoint.id} resizeVertical id={touchpoint.id} width={touchpoint.width}>
-                <h3 className="text-lg font-bold">{touchpoint.name}</h3>
+                <Touchpoint id={touchpoint.id} name={touchpoint.name} touchpoints={versionData.touchpoints} />
               </MapCell>
             ))}
             {versionData.metrics.map((metric) => (

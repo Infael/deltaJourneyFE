@@ -2,10 +2,10 @@ import { Paragraph } from "@/components/ui/paragraph";
 import { useAtomValue, useSetAtom } from "jotai";
 import { MapCell } from "./mapCell";
 
-import { addMetricProjectCommand } from "@/lib/project/commands/addMetricProjectCommand";
+import { addMetricCommand } from "@/lib/project/commands/metricCommands/addMetricCommand";
 import { MetricType } from "@/lib/project/models/metrics";
 import { projectWriteAtom } from "@/state/projectWriteAtom";
-import { ViewAtom } from "@/state/viewAtom";
+import { viewAtom } from "@/state/viewAtom";
 import { FC } from "react";
 import plusIcon from "../assets/plusIcon.svg";
 
@@ -14,7 +14,7 @@ interface NewMetricButtonProps {
 }
 
 export const NewMetricButton: FC<NewMetricButtonProps> = ({ gridSize }) => {
-  const { presentationMode } = useAtomValue(ViewAtom);
+  const { presentationMode } = useAtomValue(viewAtom);
   const updateProject = useSetAtom(projectWriteAtom);
 
   if (presentationMode) {
@@ -27,7 +27,7 @@ export const NewMetricButton: FC<NewMetricButtonProps> = ({ gridSize }) => {
         className="flex w-full flex-col items-center gap-4 p-4"
         onClick={() => {
           updateProject((prev) => {
-            const newProject = addMetricProjectCommand(prev.project, {
+            const newProject = addMetricCommand(prev.project, {
               name: "New Metric",
               versionId: prev.actualShowedVersion,
               metricKey: MetricType.TEXT,

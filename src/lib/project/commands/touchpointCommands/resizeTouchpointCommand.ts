@@ -1,34 +1,37 @@
-import { MetricType } from "../models/metrics";
-import { Metric, Project } from "../models/project";
-
-const DEFAULT_METRIC_HEIGHT = 100;
+import { Project } from "../../models/project";
 
 interface CommandData {
-  name: string;
-  metricKey: MetricType;
+  newWidth: number;
   versionId: string;
+  touchpointId: string;
 }
 
-export const addMetricProjectCommand = (project: Project, data: CommandData): Project => {
-  const newMetric: Metric = {
-    id: crypto.randomUUID(),
-    label: data.name,
-    key: data.metricKey,
-    height: DEFAULT_METRIC_HEIGHT,
-  };
-
+export const resizeTouchpointCommand = (project: Project, data: CommandData): Project => {
   const versionIndex = project.versions.findIndex((version) => version.id === data.versionId);
   if (versionIndex === -1) {
     throw new Error("Version not found");
   }
 
+  const updatedTouchpoint = project.versions[versionIndex].touchpoints.map((metric) => {
+    if (metric.id === data.touchpointId) {
+      return {
+        ...metric,
+        width: data.newWidth,
+      };
+    }
+    return metric;
+  });
+
   const updatedVersion = {
     ...project.versions[versionIndex],
-    metrics: [...project.versions[versionIndex].metrics, newMetric],
+    touchpoints: updatedTouchpoint,
     modifiedTime: new Date().toISOString(),
   };
+
   const updatedVersions = [...project.versions];
+
   updatedVersions[versionIndex] = updatedVersion;
+
   return {
     ...project,
     versions: updatedVersions,

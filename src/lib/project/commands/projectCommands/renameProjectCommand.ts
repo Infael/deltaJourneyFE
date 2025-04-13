@@ -1,4 +1,4 @@
-import { Project } from "../models/project";
+import { Project } from "../../models/project";
 
 export const renameProjectCommand = (project: Project, data: { name: string }): Project => {
   return {

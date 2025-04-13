@@ -20,6 +20,7 @@ const buttonVariants = cva(
           "text-mtext bg-main border-2 border-border hover:translate-x-reverseBoxShadowX hover:translate-y-reverseBoxShadowY hover:shadow-shadow",
         danger:
           "text-mtext bg-danger border-2 border-border shadow-shadow hover:translate-x-boxShadowX hover:translate-y-boxShadowY hover:shadow-none",
+        ghost: "text-mtext bg-transparent hover:bg-main hover:text-mtextDark",
       },
       size: {
         default: "h-10 px-4 py-2",

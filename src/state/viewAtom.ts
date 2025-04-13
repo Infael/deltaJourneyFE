@@ -5,7 +5,7 @@ interface ViewState {
   presentationMode: boolean;
 }
 
-export const ViewAtom = atom<ViewState>({
+export const viewAtom = atom<ViewState>({
   showedHud: true,
   presentationMode: false,
 });
