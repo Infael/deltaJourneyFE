@@ -1,6 +1,6 @@
 import { Paragraph } from "@/components/ui/paragraph";
 import { useAtomValue, useSetAtom } from "jotai";
-import { MapCell } from "./mapCell";
+import { MapCell } from "../mapCell";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -17,7 +17,7 @@ import { addTouchpointCommand } from "@/lib/project/commands/touchpointCommands/
 import { projectWriteAtom } from "@/state/projectWriteAtom";
 import { viewAtom } from "@/state/viewAtom";
 import { z } from "zod";
-import plusIcon from "../assets/plusIcon.svg";
+import plusIcon from "../../assets/plusIcon.svg";
 
 export const NewTouchpointButton = () => {
   const { presentationMode } = useAtomValue(viewAtom);
@@ -29,7 +29,7 @@ export const NewTouchpointButton = () => {
     },
     validators: {
       onChange: z.object({
-        name: z.string().min(1, "Touchpoint name is required"),
+        name: z.string().min(1, "Touchpoint name is required").max(64, "Touchpoint name is too long"),
       }),
     },
     onSubmit: (data) => {

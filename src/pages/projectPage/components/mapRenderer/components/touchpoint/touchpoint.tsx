@@ -12,7 +12,8 @@ import { projectWriteAtom } from "@/state/projectWriteAtom";
 import { viewAtom } from "@/state/viewAtom";
 
 import { useAtom, useAtomValue } from "jotai";
-import { FC } from "react";
+import { FC, useState } from "react";
+import { RenameTouchpointModal } from "./renameTouchpointModal";
 
 interface TouchpointProps {
   id: string;
@@ -23,6 +24,8 @@ interface TouchpointProps {
 export const Touchpoint: FC<TouchpointProps> = ({ id, name, touchpoints }) => {
   const { presentationMode } = useAtomValue(viewAtom);
   const [, updateProject] = useAtom(projectWriteAtom);
+
+  const [renameTouchpointModalOpen, setRenameTouchpointModalOpen] = useState(false);
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center gap-4">
@@ -35,7 +38,7 @@ export const Touchpoint: FC<TouchpointProps> = ({ id, name, touchpoints }) => {
           )}
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">
-          <DropdownMenuItem>Rename</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setRenameTouchpointModalOpen(true)}>Rename</DropdownMenuItem>
           <DropdownMenuItem
             disabled={touchpoints.findIndex((touchpoint) => touchpoint.id === id) === 0}
             onClick={() => {
@@ -94,6 +97,12 @@ export const Touchpoint: FC<TouchpointProps> = ({ id, name, touchpoints }) => {
       <div>
         <h4 className="text-lg font-bold">{name}</h4>
       </div>
+      <RenameTouchpointModal
+        open={renameTouchpointModalOpen}
+        setOpen={setRenameTouchpointModalOpen}
+        touchpointId={id}
+        touchpointName={name}
+      />
     </div>
   );
 };

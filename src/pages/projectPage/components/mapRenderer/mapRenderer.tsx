@@ -8,8 +8,8 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { viewAtom } from "@/state/viewAtom";
 import { MapCell } from "./components/mapCell";
 import { NewMetricButton } from "./components/newMetricButton";
-import { NewTouchpointButton } from "./components/newTouchpointButton";
-import { Touchpoint } from "./components/touchpoint";
+import { NewTouchpointButton } from "./components/touchpoint/newTouchpointButton";
+import { Touchpoint } from "./components/touchpoint/touchpoint";
 
 export const MapRenderer = () => {
   const [
