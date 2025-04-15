@@ -42,25 +42,29 @@ export const RenameModal: FC<RenameModalProps> = ({ projectId, projectName, open
         return;
       }
       toast.promise(
-        renameFile({
-          fileId: projectId,
-          data: {
-            name: `${values.value.projectName}.dj`,
+        renameFile(
+          {
+            fileId: projectId,
+            data: {
+              name: `${values.value.projectName}.dj`,
+            },
           },
-        })
-          .then(() => {
-            queryClient.invalidateQueries({ queryKey: getDriveFilesListQueryKey() });
-            setProjectData((prev) => ({
-              ...prev,
-              projectMetadata: {
-                ...prev.current.projectMetadata,
-                name: values.value.projectName,
-              },
-            }));
-          })
-          .finally(() => {
-            setOpen(false);
-          }),
+          {
+            onSuccess: () => {
+              queryClient.invalidateQueries({ queryKey: getDriveFilesListQueryKey() });
+              setProjectData((prev) => ({
+                ...prev,
+                projectMetadata: {
+                  ...prev.current.projectMetadata,
+                  name: values.value.projectName,
+                },
+              }));
+            },
+            onSettled: () => {
+              setOpen(false);
+            },
+          },
+        ),
         {
           loading: "Renaming project...",
           success: "Project renamed successfully",

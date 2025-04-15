@@ -40,10 +40,15 @@ export const NewProjectForm: FC<NewProjectFormProps> = ({ onCreate }) => {
     formData.append("file", new File([fileContent], `${name}.dj`, { type: "application/json" }));
 
     toast.promise(
-      createFile({ data: formData, params: { uploadType: "multipart" } }).then((data) => {
-        queryClient.invalidateQueries({ queryKey: getDriveFilesListQueryKey() });
-        onCreate(data.id!);
-      }),
+      createFile(
+        { data: formData, params: { uploadType: "multipart" } },
+        {
+          onSuccess: (data) => {
+            queryClient.invalidateQueries({ queryKey: getDriveFilesListQueryKey() });
+            onCreate(data.id!);
+          },
+        },
+      ),
       {
         loading: "Creating new project...",
         success: "Project created successfully",

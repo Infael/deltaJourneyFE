@@ -30,15 +30,20 @@ export const ShareModal: FC<ShareModalProps> = ({ projectId, open, setOpen }) =>
 
   const handleUpdatePermission = (permissionId: string, role: string) => {
     toast.promise(
-      updatePermission({
-        fileId: projectId,
-        permissionId,
-        data: {
-          role: role,
+      updatePermission(
+        {
+          fileId: projectId,
+          permissionId,
+          data: {
+            role: role,
+          },
         },
-      }).then(() => {
-        queryClient.invalidateQueries({ queryKey: getDrivePermissionsListQueryKey(projectId) });
-      }),
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: getDrivePermissionsListQueryKey(projectId) });
+          },
+        },
+      ),
       {
         success: "Permission updated successfully",
         error: "Error updating permission",
@@ -51,12 +56,17 @@ export const ShareModal: FC<ShareModalProps> = ({ projectId, open, setOpen }) =>
 
   const handleDeletePermission = (permissionId: string) => {
     toast.promise(
-      deletePermission({
-        fileId: projectId,
-        permissionId,
-      }).then(() => {
-        queryClient.invalidateQueries({ queryKey: getDrivePermissionsListQueryKey(projectId) });
-      }),
+      deletePermission(
+        {
+          fileId: projectId,
+          permissionId,
+        },
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: getDrivePermissionsListQueryKey(projectId) });
+          },
+        },
+      ),
       {
         success: "Permission removed successfully",
         error: "Error removing permission",
@@ -82,17 +92,22 @@ export const ShareModal: FC<ShareModalProps> = ({ projectId, open, setOpen }) =>
     },
     onSubmit: (values) => {
       toast.promise(
-        createPermission({
-          fileId: projectId,
-          data: {
-            emailAddress: values.value.shareWith,
-            role: values.value.role,
-            type: "user",
+        createPermission(
+          {
+            fileId: projectId,
+            data: {
+              emailAddress: values.value.shareWith,
+              role: values.value.role,
+              type: "user",
+            },
           },
-        }).then(() => {
-          queryClient.invalidateQueries({ queryKey: getDrivePermissionsListQueryKey(projectId) });
-          form.reset();
-        }),
+          {
+            onSuccess: () => {
+              queryClient.invalidateQueries({ queryKey: getDrivePermissionsListQueryKey(projectId) });
+              form.reset();
+            },
+          },
+        ),
         {
           success: "Shared successfully",
           error: "Error sharing",

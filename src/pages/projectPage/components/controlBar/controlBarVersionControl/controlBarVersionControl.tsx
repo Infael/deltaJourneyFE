@@ -1,18 +1,19 @@
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { createNewVersionProjectCommand } from "@/lib/project/commands/projectCommands/createNewVersionProjectCommand";
 import { projectAtom } from "@/state/projectAtom";
-import { projectWriteAtom } from "@/state/projectWriteAtom";
-import { useAtom, useSetAtom } from "jotai";
+import { useAtom } from "jotai";
+import { useState } from "react";
+import { NewVersionModal } from "./newVersionModal";
 
 export const ControlBarVersionControl = () => {
   const [{ current }, setProject] = useAtom(projectAtom);
-  const updateProject = useSetAtom(projectWriteAtom);
+
+  const [newVersionModalOpen, setNewVersionModalOpen] = useState(false);
 
   return (
     <div className="flex gap-4">
       <Select
-        defaultValue={current.actualShowedVersion}
+        value={current.actualShowedVersion}
         onValueChange={(value) =>
           setProject((prev) => ({ ...prev, current: { ...prev.current, actualShowedVersion: value } }))
         }
@@ -30,24 +31,11 @@ export const ControlBarVersionControl = () => {
           </SelectGroup>
         </SelectContent>
       </Select>
-      <Button
-        variant="noShadow"
-        onClick={() => {
-          updateProject((prev) => {
-            const newProject = createNewVersionProjectCommand(prev.project, {
-              name: `Version ${prev.project.versions.length + 1}`,
-            });
-            return {
-              ...prev,
-              project: newProject,
-              actualShowedVersion: newProject.versions[newProject.versions.length - 1].id,
-            };
-          });
-        }}
-      >
+      <Button variant="noShadow" onClick={() => setNewVersionModalOpen(true)}>
         Create New Version
       </Button>
       <Button variant="noShadow">Compare with</Button>
+      <NewVersionModal open={newVersionModalOpen} setOpen={setNewVersionModalOpen} />
     </div>
   );
 };

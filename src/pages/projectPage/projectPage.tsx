@@ -38,26 +38,30 @@ export const ProjectPage = () => {
       });
   };
   const getFileMetadata = (projectId: string) => {
-    getDriveFile({ fileId: projectId, params: { fields: "id, name, createdTime, modifiedTime, owners" } })
-      .then((data) => {
-        setProjectData((prev) => ({
-          ...prev,
-          current: {
-            ...prev.current,
-            projectMetadata: {
-              id: data.id!,
-              name: data.name!,
-              createdTime: data.createdTime!,
-              modifiedTime: data.modifiedTime!,
-              owners: data.owners!,
+    getDriveFile(
+      { fileId: projectId, params: { fields: "id, name, createdTime, modifiedTime, owners" } },
+      {
+        onSuccess: (data) => {
+          setProjectData((prev) => ({
+            ...prev,
+            current: {
+              ...prev.current,
+              projectMetadata: {
+                id: data.id!,
+                name: data.name!,
+                createdTime: data.createdTime!,
+                modifiedTime: data.modifiedTime!,
+                owners: data.owners!,
+              },
+              projectStorage: "drive",
             },
-            projectStorage: "drive",
-          },
-        }));
-      })
-      .catch((error) => {
-        console.error("Error fetching file metadata:", error);
-      });
+          }));
+        },
+        onError: (error) => {
+          console.error("Error fetching file metadata:", error);
+        },
+      },
+    );
   };
 
   useEffect(() => {

@@ -24,16 +24,20 @@ export const DeleteModal: FC<DeleteModal> = ({ projectId, open, setOpen, onDelet
 
   const handleDelete = () => {
     toast.promise(
-      deleteFile({ fileId: projectId })
-        .then(() => {
-          queryClient.invalidateQueries({ queryKey: getDriveFilesListQueryKey() });
-        })
-        .finally(() => {
-          setOpen(false);
-          if (onDelete) {
-            onDelete();
-          }
-        }),
+      deleteFile(
+        { fileId: projectId },
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: getDriveFilesListQueryKey() });
+          },
+          onSettled: () => {
+            setOpen(false);
+            if (onDelete) {
+              onDelete();
+            }
+          },
+        },
+      ),
       {
         loading: "Deleting project...",
         success: "Project deleted successfully",

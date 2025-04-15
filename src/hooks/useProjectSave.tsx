@@ -29,9 +29,14 @@ export const useProjectSave = () => {
       formData.append("file", new Blob([JSON.stringify(project)], { type: "application/json" }));
 
       toast.promise(
-        saveToDrive({ fileId: projectMetadata.id, data: formData, params: { uploadType: "multipart" } }).then(() => {
-          setSavedProject(true);
-        }),
+        saveToDrive(
+          { fileId: projectMetadata.id, data: formData, params: { uploadType: "multipart" } },
+          {
+            onSuccess: () => {
+              setSavedProject(true);
+            },
+          },
+        ),
         {
           loading: "Saving project...",
           success: "Project saved successfully",
