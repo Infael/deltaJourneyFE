@@ -7,7 +7,8 @@ import { useMemo } from "react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { viewAtom } from "@/state/viewAtom";
 import { MapCell } from "./components/mapCell";
-import { NewMetricButton } from "./components/newMetricButton";
+import { Metric } from "./components/metric/metric";
+import { NewMetricButton } from "./components/metric/newMetricButton";
 import { NewTouchpointButton } from "./components/touchpoint/newTouchpointButton";
 import { Touchpoint } from "./components/touchpoint/touchpoint";
 
@@ -40,20 +41,23 @@ export const MapRenderer = () => {
               <h3 className="text-lg font-bold">Touchpoints</h3>
             </MapCell>
             {versionData.touchpoints.map((touchpoint) => (
-              <MapCell key={touchpoint.id} resizeVertical id={touchpoint.id} width={touchpoint.width}>
-                <Touchpoint id={touchpoint.id} name={touchpoint.name} touchpoints={versionData.touchpoints} />
-              </MapCell>
+              <Touchpoint
+                key={touchpoint.id}
+                id={touchpoint.id}
+                name={touchpoint.name}
+                width={touchpoint.width}
+                touchpoints={versionData.touchpoints}
+              />
             ))}
             {versionData.metrics.map((metric) => (
-              <MapCell
+              <Metric
                 key={metric.id}
-                resizeHorizontal
-                gridSize={versionData.touchpoints.length + 1}
                 id={metric.id}
+                label={metric.label}
                 height={metric.height}
-              >
-                {metric.label}
-              </MapCell>
+                metrics={versionData.metrics}
+                touchpoints={versionData.touchpoints}
+              />
             ))}
             <NewMetricButton gridSize={versionData.touchpoints.length + 1} />
           </div>

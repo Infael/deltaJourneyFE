@@ -13,30 +13,37 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useAppForm } from "@/hooks/useForm";
-import { addTouchpointCommand } from "@/lib/project/commands/touchpointCommands/addTouchpointCommand";
+import { addMetricCommand } from "@/lib/project/commands/metricCommands/addMetricCommand";
+import { MetricType } from "@/lib/project/models/metrics";
 import { projectWriteAtom } from "@/state/projectWriteAtom";
 import { viewAtom } from "@/state/viewAtom";
+import { FC } from "react";
 import { z } from "zod";
 import plusIcon from "../../assets/plusIcon.svg";
 
-export const NewTouchpointButton = () => {
+interface NewMetricButtonProps {
+  gridSize: number;
+}
+
+export const NewMetricButton: FC<NewMetricButtonProps> = ({ gridSize }) => {
   const { presentationMode } = useAtomValue(viewAtom);
   const updateProject = useSetAtom(projectWriteAtom);
 
   const form = useAppForm({
     defaultValues: {
-      name: "New Touchpoint",
+      name: "New Metric",
     },
     validators: {
       onChange: z.object({
-        name: z.string().min(1, "Touchpoint name is required").max(64, "Touchpoint name is too long"),
+        name: z.string().min(1, "Metric name is required").max(64, "Metric name is too long"),
       }),
     },
     onSubmit: (data) => {
       updateProject((prev) => {
-        const newProject = addTouchpointCommand(prev.project, {
+        const newProject = addMetricCommand(prev.project, {
           name: data.value.name,
           versionId: prev.actualShowedVersion,
+          metricKey: MetricType.TEXT,
         });
 
         return {
@@ -52,18 +59,18 @@ export const NewTouchpointButton = () => {
   }
 
   return (
-    <MapCell className="hover:bg-main w-42 hover:cursor-pointer">
+    <MapCell className="hover:bg-main hover:cursor-pointer" gridSize={gridSize}>
       <Dialog>
         <DialogTrigger asChild>
-          <button className="flex h-full w-full flex-col items-center gap-4 p-4">
-            <img src={plusIcon} alt="add new touchpoint" />
-            <Paragraph>New Touchpoint</Paragraph>
+          <button className="flex w-full flex-col items-center gap-4 p-4">
+            <img src={plusIcon} alt="add new Metric" className="h-32" />
+            <Paragraph>New Metric</Paragraph>
           </button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Create new Touchpoint</DialogTitle>
-            <DialogDescription className="hidden">Dialog for creating new touchpoint</DialogDescription>
+            <DialogTitle>Add new Metric</DialogTitle>
+            <DialogDescription className="hidden">Dialog for adding new metric</DialogDescription>
           </DialogHeader>
           <form
             className="flex flex-col gap-8"
@@ -73,9 +80,7 @@ export const NewTouchpointButton = () => {
             }}
           >
             <form.AppField name="name">
-              {(field) => (
-                <field.TextField label="Enter the name for your new Touchpoint:" placeholder="Touchpoint name" />
-              )}
+              {(field) => <field.TextField label="Enter metric name:" placeholder="Metric name" />}
             </form.AppField>
             <DialogClose asChild>
               <Button type="submit">Create</Button>
