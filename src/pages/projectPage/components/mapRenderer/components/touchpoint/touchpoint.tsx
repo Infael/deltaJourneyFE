@@ -30,7 +30,7 @@ export const Touchpoint: FC<TouchpointProps> = ({ id, name, width, touchpoints }
   const [renameTouchpointModalOpen, setRenameTouchpointModalOpen] = useState(false);
 
   return (
-    <MapCell resizeVertical id={id} width={width}>
+    <MapCell resizeVertical id={id} width={width} className="min-w-full">
       <div className="flex h-full w-full flex-col items-center justify-center gap-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild className="absolute top-1 right-1">

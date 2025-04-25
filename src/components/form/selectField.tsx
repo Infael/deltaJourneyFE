@@ -1,9 +1,11 @@
 import { useFieldContext } from "@/hooks/useForm";
 import { FC } from "react";
+import { Label } from "../ui/label";
 import { Paragraph } from "../ui/paragraph";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 interface SelectFieldProps {
+  label?: string;
   items: {
     label: string;
     value: string;
@@ -11,17 +13,22 @@ interface SelectFieldProps {
   defaultValue?: string;
 }
 
-export const SelectField: FC<SelectFieldProps> = ({ items, defaultValue }) => {
+export const SelectField: FC<SelectFieldProps> = ({ label, items, defaultValue }) => {
   const field = useFieldContext<string>();
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex items-center gap-2">
+      {label && (
+        <Label className="flex-1" htmlFor={field.name}>
+          {label}
+        </Label>
+      )}
       <Select
         value={field.state.value}
         onValueChange={field.handleChange}
         defaultValue={defaultValue ?? items[0].value}
       >
-        <SelectTrigger className="w-[180px]">
+        <SelectTrigger id={field.name} className="w-full flex-2">
           <SelectValue defaultValue={field.state.value} />
         </SelectTrigger>
         <SelectContent>

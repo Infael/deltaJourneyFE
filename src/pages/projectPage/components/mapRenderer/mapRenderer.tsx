@@ -52,9 +52,7 @@ export const MapRenderer = () => {
             {versionData.metrics.map((metric) => (
               <Metric
                 key={metric.id}
-                id={metric.id}
-                label={metric.label}
-                height={metric.height}
+                metricInfo={metric}
                 metrics={versionData.metrics}
                 touchpoints={versionData.touchpoints}
               />

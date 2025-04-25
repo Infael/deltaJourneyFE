@@ -29,8 +29,15 @@ export const createNewVersionProjectCommand = (project: Project, data: CommandDa
         createdTime: new Date().toISOString(),
         modifiedTime: new Date().toISOString(),
         description: "",
-        metrics: project.versions[0].metrics,
-        touchpoints: project.versions[0].touchpoints,
+        metrics: project.versions[0].metrics.map((metric) => ({
+          ...metric,
+          id: crypto.randomUUID(),
+        })),
+        touchpoints: project.versions[0].touchpoints.map((touchpoint) => ({
+          ...touchpoint,
+          id: crypto.randomUUID(),
+          metricsData: [],
+        })),
       };
       break;
     case "lastData":
@@ -42,11 +49,12 @@ export const createNewVersionProjectCommand = (project: Project, data: CommandDa
         description: "",
         metrics: project.versions[0].metrics.map((metric) => ({
           ...metric,
-          id: crypto.randomUUID(),
         })),
         touchpoints: project.versions[0].touchpoints.map((touchpoint) => ({
           ...touchpoint,
-          id: crypto.randomUUID(),
+          metricsData: touchpoint.metricsData.map((metric) => ({
+            ...metric,
+          })),
         })),
       };
       break;

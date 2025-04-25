@@ -1,5 +1,5 @@
 import { MetricType } from "../../models/metrics";
-import { Metric, Project } from "../../models/project";
+import { MetricInfo, Project } from "../../models/project";
 
 const DEFAULT_METRIC_HEIGHT = 100;
 
@@ -10,7 +10,7 @@ interface CommandData {
 }
 
 export const addMetricCommand = (project: Project, data: CommandData): Project => {
-  const newMetric: Metric = {
+  const newMetric: MetricInfo = {
     id: crypto.randomUUID(),
     label: data.name,
     key: data.metricKey,

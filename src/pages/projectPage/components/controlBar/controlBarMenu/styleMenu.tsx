@@ -1,10 +1,8 @@
 import {
   MenubarContent,
-  MenubarItem,
   MenubarMenu,
   MenubarRadioGroup,
   MenubarRadioItem,
-  MenubarSeparator,
   MenubarTrigger,
 } from "@/components/ui/menubar";
 
@@ -13,15 +11,11 @@ export const StyleMenu = () => {
     <MenubarMenu>
       <MenubarTrigger>Style</MenubarTrigger>
       <MenubarContent>
-        <MenubarRadioGroup value="benoit">
-          <MenubarRadioItem value="andy">Andy</MenubarRadioItem>
-          <MenubarRadioItem value="benoit">Benoit</MenubarRadioItem>
-          <MenubarRadioItem value="Luis">Luis</MenubarRadioItem>
+        <MenubarRadioGroup value="light">
+          <MenubarRadioItem value="light">Light</MenubarRadioItem>
+          <MenubarRadioItem value="dark">Dark</MenubarRadioItem>
+          <MenubarRadioItem value="custom">Custom</MenubarRadioItem>
         </MenubarRadioGroup>
-        <MenubarSeparator />
-        <MenubarItem inset>Edit...</MenubarItem>
-        <MenubarSeparator />
-        <MenubarItem inset>Add Profile...</MenubarItem>
       </MenubarContent>
     </MenubarMenu>
   );

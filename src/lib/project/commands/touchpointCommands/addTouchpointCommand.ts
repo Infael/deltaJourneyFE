@@ -1,4 +1,4 @@
-import { Project } from "../../models/project";
+import { Project, Touchpoint } from "../../models/project";
 
 const DEFAULT_TOUCHPOINT_WIDTH = 100;
 
@@ -8,13 +8,13 @@ interface CommandData {
 }
 
 export const addTouchpointCommand = (project: Project, data: CommandData): Project => {
-  const newTouchpoint = {
+  const newTouchpoint: Touchpoint = {
     id: crypto.randomUUID(),
     name: data.name,
     createdTime: new Date().toISOString(),
     modifiedTime: new Date().toISOString(),
     description: "",
-    metrics: [],
+    metricsData: [],
     width: DEFAULT_TOUCHPOINT_WIDTH,
   };
 

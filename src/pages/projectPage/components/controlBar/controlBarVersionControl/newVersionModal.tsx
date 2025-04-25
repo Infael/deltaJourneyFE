@@ -22,7 +22,7 @@ export const NewVersionModal: FC<NewVersionModalProps> = ({ open, setOpen }) => 
 
   const form = useAppForm({
     defaultValues: {
-      name: `Version ${project.current.project.versions.length + 1}`,
+      name: `Version ${project.current.project.versions.length + 1} - ${new Date().toLocaleDateString()}`,
       createFrom: "lastLayout",
     },
     validators: {

@@ -32,10 +32,12 @@ export const NewMetricButton: FC<NewMetricButtonProps> = ({ gridSize }) => {
   const form = useAppForm({
     defaultValues: {
       name: "New Metric",
+      type: MetricType.TEXT,
     },
     validators: {
       onChange: z.object({
         name: z.string().min(1, "Metric name is required").max(64, "Metric name is too long"),
+        type: z.enum([MetricType.TEXT]),
       }),
     },
     onSubmit: (data) => {
@@ -43,7 +45,7 @@ export const NewMetricButton: FC<NewMetricButtonProps> = ({ gridSize }) => {
         const newProject = addMetricCommand(prev.project, {
           name: data.value.name,
           versionId: prev.actualShowedVersion,
-          metricKey: MetricType.TEXT,
+          metricKey: data.value.type,
         });
 
         return {
@@ -81,6 +83,11 @@ export const NewMetricButton: FC<NewMetricButtonProps> = ({ gridSize }) => {
           >
             <form.AppField name="name">
               {(field) => <field.TextField label="Enter metric name:" placeholder="Metric name" />}
+            </form.AppField>
+            <form.AppField name="type">
+              {(field) => (
+                <field.SelectField label="Select type:" items={[{ label: "Text", value: MetricType.TEXT }]} />
+              )}
             </form.AppField>
             <DialogClose asChild>
               <Button type="submit">Create</Button>

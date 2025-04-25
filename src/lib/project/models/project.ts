@@ -1,4 +1,4 @@
-import { MetricType } from "./metrics";
+import { MetricData, MetricType } from "./metrics";
 
 export interface Project {
   id: string;
@@ -18,11 +18,11 @@ export interface ProjectVersion {
   modifiedTime: string;
   description: string;
 
-  metrics: Metric[];
+  metrics: MetricInfo[];
   touchpoints: Touchpoint[];
 }
 
-export interface Metric {
+export interface MetricInfo {
   id: string;
   key: MetricType;
   label: string;
@@ -37,5 +37,5 @@ export interface Touchpoint {
   description: string;
   width: number;
 
-  metrics: Metric[];
+  metricsData: MetricData[];
 }

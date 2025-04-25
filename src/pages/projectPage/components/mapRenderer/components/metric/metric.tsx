@@ -7,31 +7,49 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { deleteMetricCommand } from "@/lib/project/commands/metricCommands/deleteMetricCommand";
 import { moveMetricCommand } from "@/lib/project/commands/metricCommands/moveMetricCommand";
-import { Metric as MetricType, Touchpoint } from "@/lib/project/models/project";
+import { MetricType } from "@/lib/project/models/metrics";
+import { MetricInfo, Touchpoint } from "@/lib/project/models/project";
 import { projectWriteAtom } from "@/state/projectWriteAtom";
 import { viewAtom } from "@/state/viewAtom";
 import { useAtom, useAtomValue } from "jotai";
-import { FC, useState } from "react";
+import { FC, useMemo, useState } from "react";
 import { MapCell } from "../mapCell";
+import { TextMetric } from "./metricTypes/textMetric";
 import { RenameMetricModal } from "./renameMetricModal";
 
 interface MetricProps {
-  id: string;
-  label: string;
-  height: number;
-  metrics: MetricType[];
+  metricInfo: MetricInfo;
   touchpoints: Touchpoint[];
+  metrics: MetricInfo[];
 }
 
-export const Metric: FC<MetricProps> = ({ id, label, height, metrics, touchpoints }) => {
+export const Metric: FC<MetricProps> = ({ metricInfo, touchpoints, metrics }) => {
   const { presentationMode } = useAtomValue(viewAtom);
   const [, updateProject] = useAtom(projectWriteAtom);
 
   const [renameTouchpointModalOpen, setRenameTouchpointModalOpen] = useState(false);
 
+  const metricData = useMemo(() => {
+    return touchpoints.map((touchpoint) => ({
+      touchpointId: touchpoint.id,
+      metricId: metricInfo.id,
+      metricData: touchpoint.metricsData.find((metric) => metric.id === metricInfo.id),
+    }));
+  }, [metricInfo, touchpoints]);
+
+  const getMetricContentComponent = () => {
+    switch (metricInfo.key) {
+      case MetricType.TEXT:
+        return <TextMetric metricData={metricData} />;
+
+      default:
+        return <MapCell gridSize={touchpoints.length}>Metric Type Not Implemented Yet</MapCell>;
+    }
+  };
+
   return (
     <>
-      <MapCell resizeHorizontal id={id} height={height}>
+      <MapCell resizeHorizontal id={metricInfo.id} height={metricInfo.height} className="min-h-full">
         <div className="flex h-full w-full flex-col items-center justify-center gap-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild className="absolute top-1 right-1">
@@ -44,11 +62,11 @@ export const Metric: FC<MetricProps> = ({ id, label, height, metrics, touchpoint
             <DropdownMenuContent align="start">
               <DropdownMenuItem onClick={() => setRenameTouchpointModalOpen(true)}>Rename</DropdownMenuItem>
               <DropdownMenuItem
-                disabled={metrics.findIndex((metric) => metric.id === id) === 0}
+                disabled={metrics.findIndex((metric) => metric.id === metricInfo.id) === 0}
                 onClick={() => {
                   updateProject((prev) => {
                     const newProject = moveMetricCommand(prev.project, {
-                      metricId: id,
+                      metricId: metricInfo.id,
                       versionId: prev.actualShowedVersion,
                       down: false,
                     });
@@ -62,11 +80,11 @@ export const Metric: FC<MetricProps> = ({ id, label, height, metrics, touchpoint
                 Move Up
               </DropdownMenuItem>
               <DropdownMenuItem
-                disabled={metrics.findIndex((metric) => metric.id === id) === metrics.length - 1}
+                disabled={metrics.findIndex((metric) => metric.id === metricInfo.id) === metrics.length - 1}
                 onClick={() => {
                   updateProject((prev) => {
                     const newProject = moveMetricCommand(prev.project, {
-                      metricId: id,
+                      metricId: metricInfo.id,
                       versionId: prev.actualShowedVersion,
                       down: true,
                     });
@@ -84,7 +102,7 @@ export const Metric: FC<MetricProps> = ({ id, label, height, metrics, touchpoint
                 onClick={() => {
                   updateProject((prev) => {
                     const newProject = deleteMetricCommand(prev.project, {
-                      metricId: id,
+                      metricId: metricInfo.id,
                       versionId: prev.actualShowedVersion,
                     });
                     return {
@@ -99,17 +117,17 @@ export const Metric: FC<MetricProps> = ({ id, label, height, metrics, touchpoint
             </DropdownMenuContent>
           </DropdownMenu>
           <div>
-            <h4 className="text-lg font-bold">{label}</h4>
+            <h4 className="text-lg font-bold">{metricInfo.label}</h4>
           </div>
           <RenameMetricModal
             open={renameTouchpointModalOpen}
             setOpen={setRenameTouchpointModalOpen}
-            metricId={id}
-            metricName={label}
+            metricId={metricInfo.id}
+            metricName={metricInfo.label}
           />
         </div>
       </MapCell>
-      <MapCell gridSize={touchpoints.length}>ahoj</MapCell>
+      {getMetricContentComponent()}
     </>
   );
 };
