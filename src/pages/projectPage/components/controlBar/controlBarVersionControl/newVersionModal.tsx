@@ -4,7 +4,7 @@ import { useAppForm } from "@/hooks/useForm";
 import {
   CreateNewVersionCommandCreateFrom,
   createNewVersionProjectCommand,
-} from "@/lib/project/commands/projectCommands/createNewVersionProjectCommand";
+} from "@/lib/project/commands/versionCommands/createNewVersionProjectCommand";
 import { projectAtom } from "@/state/projectAtom";
 import { projectWriteAtom } from "@/state/projectWriteAtom";
 import { useAtom, useAtomValue } from "jotai";

@@ -1,48 +1,31 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useAppForm } from "@/hooks/useForm";
-import { renameTouchpointCommand } from "@/lib/project/commands/touchpointCommands/renameTouchpointCommand";
 import { projectWriteAtom } from "@/state/projectWriteAtom";
 import { useAtom } from "jotai";
 import { FC } from "react";
 import { z } from "zod";
 
-interface RenameTouchpointModalProps {
-  touchpointId: string;
-  touchpointName: string;
+interface RenameVersionModalProps {
   open: boolean;
   setOpen: (open: boolean) => void;
 }
 
-export const RenameTouchpointModal: FC<RenameTouchpointModalProps> = ({
-  touchpointId,
-  touchpointName,
-  open,
-  setOpen,
-}) => {
+export const RenameVersionModal: FC<RenameVersionModalProps> = ({ open, setOpen }) => {
   const [, updateProject] = useAtom(projectWriteAtom);
 
   const form = useAppForm({
     defaultValues: {
-      touchpointName: touchpointName,
+      versionName: "TODO",
     },
     validators: {
       onChange: z.object({
-        touchpointName: z.string().min(1, "Touchpoint name is required").max(64, "Touchpoint name is too long"),
+        versionName: z.string().min(1, "Version name is required").max(64, "Version name is too long"),
       }),
     },
     onSubmit: (values) => {
       updateProject((prev) => {
-        const newProject = renameTouchpointCommand(prev.project, {
-          touchpointId: touchpointId,
-          versionId: prev.actualShowedVersion,
-          name: values.value.touchpointName,
-        });
-
-        return {
-          ...prev,
-          project: newProject,
-        };
+        // todo
       });
 
       setOpen(false);
@@ -53,8 +36,8 @@ export const RenameTouchpointModal: FC<RenameTouchpointModalProps> = ({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Rename Touchpoint</DialogTitle>
-          <DialogDescription className="hidden">Dialog for renaming the touchpoint</DialogDescription>
+          <DialogTitle>Rename Version</DialogTitle>
+          <DialogDescription className="hidden">Dialog for renaming current Version</DialogDescription>
         </DialogHeader>
         <form
           onSubmit={(e) => {
@@ -64,7 +47,7 @@ export const RenameTouchpointModal: FC<RenameTouchpointModalProps> = ({
           className="flex flex-col gap-4"
         >
           <form.AppField name="versionName">
-            {(field) => <field.TextField label="Enter the new name for touchpoint:" />}
+            {(field) => <field.TextField label="Enter the new name for version:" />}
           </form.AppField>
 
           <Button type="submit" className="w-full">
