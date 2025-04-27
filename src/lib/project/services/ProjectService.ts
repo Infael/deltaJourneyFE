@@ -1,5 +1,15 @@
 import { v4 as uuidv4 } from "uuid";
-import { Project } from "../models/project";
+import { Project, ProjectVersion } from "../models/project";
+
+export const createEmptyVersion = (): ProjectVersion => ({
+  id: uuidv4(),
+  name: "Version 1",
+  createdTime: new Date().toISOString(),
+  modifiedTime: new Date().toISOString(),
+  description: "",
+  metrics: [],
+  touchpoints: [],
+});
 
 export const createEmptyProject = (name: string): Project => {
   return {
@@ -9,17 +19,7 @@ export const createEmptyProject = (name: string): Project => {
     createdTime: new Date().toISOString(),
     modifiedTime: new Date().toISOString(),
     description: "",
-    versions: [
-      {
-        id: uuidv4(),
-        name: "Version 1",
-        createdTime: new Date().toISOString(),
-        modifiedTime: new Date().toISOString(),
-        description: "",
-        metrics: [],
-        touchpoints: [],
-      },
-    ],
+    versions: [createEmptyVersion()],
   };
 };
 

@@ -1,12 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { projectAtom } from "@/state/projectAtom";
-import { useAtom } from "jotai";
+import { viewAtom } from "@/state/viewAtom";
+import { useAtom, useAtomValue } from "jotai";
 import { useState } from "react";
 import { NewVersionModal } from "./newVersionModal";
 
 export const ControlBarVersionControl = () => {
   const [{ current }, setProject] = useAtom(projectAtom);
+  const view = useAtomValue(viewAtom);
 
   const [newVersionModalOpen, setNewVersionModalOpen] = useState(false);
 
@@ -31,9 +33,11 @@ export const ControlBarVersionControl = () => {
           </SelectGroup>
         </SelectContent>
       </Select>
-      <Button variant="noShadow" onClick={() => setNewVersionModalOpen(true)}>
-        Create New Version
-      </Button>
+      {!view.presentationMode && (
+        <Button variant="noShadow" onClick={() => setNewVersionModalOpen(true)}>
+          Create New Version
+        </Button>
+      )}
       <Button variant="noShadow">Compare with</Button>
       <NewVersionModal open={newVersionModalOpen} setOpen={setNewVersionModalOpen} />
     </div>

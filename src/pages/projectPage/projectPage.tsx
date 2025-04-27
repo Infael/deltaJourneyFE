@@ -1,10 +1,8 @@
 import { useDriveFilesGet } from "@/api/driveApi/drive-api";
 import { Spinner } from "@/components/ui/spinner/spinner";
 import { Project } from "@/lib/project/models/project";
-import { cn } from "@/lib/utils";
 import { projectAtom } from "@/state/projectAtom";
-import { viewAtom } from "@/state/viewAtom";
-import { useAtom, useAtomValue } from "jotai";
+import { useAtom } from "jotai";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { ControlBar } from "./components/controlBar/controlBar";
@@ -13,7 +11,6 @@ import { MapRenderer } from "./components/mapRenderer/mapRenderer";
 export const ProjectPage = () => {
   const { state } = useLocation();
   const [projectData, setProjectData] = useAtom(projectAtom);
-  const { presentationMode } = useAtomValue(viewAtom);
 
   const { mutateAsync: getDriveFile, isPending } = useDriveFilesGet();
 
@@ -80,7 +77,7 @@ export const ProjectPage = () => {
   }
 
   return (
-    <div className={cn("flex flex-col", presentationMode && "items-center justify-center")}>
+    <div className="flex flex-col">
       <ControlBar />
       <MapRenderer />
     </div>

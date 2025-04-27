@@ -1,4 +1,5 @@
 import { Project, ProjectVersion } from "../../models/project";
+import { createEmptyVersion } from "../../services/ProjectService";
 
 export type CreateNewVersionCommandCreateFrom = "empty" | "lastLayout" | "lastData";
 
@@ -13,13 +14,8 @@ export const createNewVersionProjectCommand = (project: Project, data: CommandDa
   switch (data.createFrom) {
     case "empty":
       newVersion = {
-        id: crypto.randomUUID(),
+        ...createEmptyVersion(),
         name: data.name,
-        createdTime: new Date().toISOString(),
-        modifiedTime: new Date().toISOString(),
-        description: "",
-        metrics: [],
-        touchpoints: [],
       };
       break;
     case "lastLayout":

@@ -21,9 +21,7 @@ export const DeleteVersionModal: FC<DeleteVersionModal> = ({ open, setOpen }) =>
   const [, updateProject] = useAtom(projectWriteAtom);
 
   const handleDelete = () => {
-    updateProject((prev) => {
-      return deleteVersionCommand(prev);
-    });
+    updateProject((prev) => deleteVersionCommand(prev));
     setOpen(false);
   };
 

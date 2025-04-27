@@ -35,7 +35,7 @@ export const MapRenderer = () => {
   }
 
   return (
-    <div className="flex py-4 pl-8">
+    <div className="flex justify-center py-4 pl-8">
       <ScrollArea className={showedHud ? "h-[calc(100vh-280px)]" : "h-[calc(100vh-120px)]"}>
         <div
           className="bg-bw flex max-w-max rounded-md border-2"
