@@ -37,7 +37,7 @@ export const NewMetricButton: FC<NewMetricButtonProps> = ({ gridSize }) => {
     validators: {
       onChange: z.object({
         name: z.string().min(1, "Metric name is required").max(64, "Metric name is too long"),
-        type: z.enum([MetricType.TEXT]),
+        type: z.enum([MetricType.TEXT, MetricType.EXPERIENCE]),
       }),
     },
     onSubmit: (data) => {
@@ -86,7 +86,13 @@ export const NewMetricButton: FC<NewMetricButtonProps> = ({ gridSize }) => {
             </form.AppField>
             <form.AppField name="type">
               {(field) => (
-                <field.SelectField label="Select type:" items={[{ label: "Text", value: MetricType.TEXT }]} />
+                <field.SelectField
+                  label="Select type:"
+                  items={[
+                    { label: "Text", value: MetricType.TEXT },
+                    { label: "Experience", value: MetricType.EXPERIENCE },
+                  ]}
+                />
               )}
             </form.AppField>
             <DialogClose asChild>

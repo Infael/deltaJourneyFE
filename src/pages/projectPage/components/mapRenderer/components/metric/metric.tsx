@@ -7,13 +7,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { deleteMetricCommand } from "@/lib/project/commands/metricCommands/deleteMetricCommand";
 import { moveMetricCommand } from "@/lib/project/commands/metricCommands/moveMetricCommand";
-import { MetricType } from "@/lib/project/models/metrics";
+import { ExperienceMetricData, MetricData, MetricType, TextMetricData } from "@/lib/project/models/metrics";
 import { MetricInfo, Touchpoint } from "@/lib/project/models/project";
 import { projectWriteAtom } from "@/state/projectWriteAtom";
 import { viewAtom } from "@/state/viewAtom";
 import { useAtom, useAtomValue } from "jotai";
 import { FC, useMemo, useState } from "react";
 import { MapCell } from "../mapCell";
+import { ExperienceMetric } from "./metricTypes/experienceMetric";
 import { TextMetric } from "./metricTypes/textMetric";
 import { RenameMetricModal } from "./renameMetricModal";
 
@@ -22,6 +23,12 @@ interface MetricProps {
   touchpoints: Touchpoint[];
   metrics: MetricInfo[];
 }
+
+export type MetricDataWithTouchpoint<T extends MetricData> = {
+  touchpointId: string;
+  touchpointWidth: number;
+  metricId: string;
+} & ({ metricData: T } | { metricData: undefined });
 
 export const Metric: FC<MetricProps> = ({ metricInfo, touchpoints, metrics }) => {
   const { presentationMode } = useAtomValue(viewAtom);
@@ -32,6 +39,7 @@ export const Metric: FC<MetricProps> = ({ metricInfo, touchpoints, metrics }) =>
   const metricData = useMemo(() => {
     return touchpoints.map((touchpoint) => ({
       touchpointId: touchpoint.id,
+      touchpointWidth: touchpoint.width,
       metricId: metricInfo.id,
       metricData: touchpoint.metricsData.find((metric) => metric.id === metricInfo.id),
     }));
@@ -40,8 +48,14 @@ export const Metric: FC<MetricProps> = ({ metricInfo, touchpoints, metrics }) =>
   const getMetricContentComponent = () => {
     switch (metricInfo.key) {
       case MetricType.TEXT:
-        return <TextMetric metricData={metricData} />;
-
+        return <TextMetric metricData={metricData as MetricDataWithTouchpoint<TextMetricData>[]} />;
+      case MetricType.EXPERIENCE:
+        return (
+          <ExperienceMetric
+            metricData={metricData as MetricDataWithTouchpoint<ExperienceMetricData>[]}
+            height={metricInfo.height}
+          />
+        );
       default:
         return <MapCell gridSize={touchpoints.length}>Metric Type Not Implemented Yet</MapCell>;
     }
@@ -49,7 +63,7 @@ export const Metric: FC<MetricProps> = ({ metricInfo, touchpoints, metrics }) =>
 
   return (
     <>
-      <MapCell resizeHorizontal id={metricInfo.id} height={metricInfo.height} className="min-h-full">
+      <MapCell resizeHorizontal id={metricInfo.id} height={metricInfo.height}>
         <div className="flex h-full w-full flex-col items-center justify-center gap-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild className="absolute top-1 right-1">

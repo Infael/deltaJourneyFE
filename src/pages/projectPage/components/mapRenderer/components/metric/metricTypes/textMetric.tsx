@@ -1,9 +1,9 @@
-import { TextMetricData } from "@/lib/project/models/metrics";
 import { cn } from "@/lib/utils";
 import { viewAtom } from "@/state/viewAtom";
 import { Color } from "@tiptap/extension-color";
 
 import { updateTextMetricValueCommand } from "@/lib/project/commands/metricCommands/textMetricCommands/updateTextMetricValueCommand";
+import { TextMetricData } from "@/lib/project/models/metrics";
 import { projectWriteAtom } from "@/state/projectWriteAtom";
 import Highlight from "@tiptap/extension-highlight";
 import TextStyle from "@tiptap/extension-text-style";
@@ -12,14 +12,10 @@ import StarterKit from "@tiptap/starter-kit";
 import { useAtomValue, useSetAtom } from "jotai";
 import { FC, useEffect } from "react";
 import { MapCell } from "../../mapCell";
-
-type MetricDataWithTouchpoint = {
-  touchpointId: string;
-  metricId: string;
-} & ({ metricData: TextMetricData } | { metricData: undefined });
+import { MetricDataWithTouchpoint } from "../metric";
 
 interface TextMetricProps {
-  metricData: MetricDataWithTouchpoint[];
+  metricData: MetricDataWithTouchpoint<TextMetricData>[];
 }
 
 const GREEN = "#008000";
@@ -29,7 +25,7 @@ const BLUE = "#0000ff";
 const DEFAULT_CONTENT = '<p><span style="color: rgb(204, 204, 204)">Nothing here<br>start typing now...</span></p>';
 
 interface TextMetricEditorProps {
-  data: MetricDataWithTouchpoint;
+  data: MetricDataWithTouchpoint<TextMetricData>;
 }
 
 export const TextMetricEditor: FC<TextMetricEditorProps> = ({ data }) => {

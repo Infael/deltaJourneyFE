@@ -8,8 +8,14 @@ export interface TextMetricData extends BaseMetricData {
   value: string;
 }
 
-export enum MetricType {
-  TEXT = "text",
+export interface ExperienceMetricData extends BaseMetricData {
+  key: MetricType.EXPERIENCE;
+  value: number;
 }
 
-export type MetricData = TextMetricData; // | OtherMetricData; aka discriminated union
+export enum MetricType {
+  TEXT = "text",
+  EXPERIENCE = "experience",
+}
+
+export type MetricData = TextMetricData | ExperienceMetricData; // | OtherMetricData; aka discriminated union
