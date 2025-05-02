@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- License: CC Attribution. Made by Leonid Tsvetkov: https://www.figma.com/@Leonid -->
+<svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="12" cy="12" r="9.5" stroke="#000" stroke-linecap="round"/>
+<line x1="8.20857" y1="16.622" x2="15.7914" y2="15.622" stroke="#000" stroke-linecap="round" />
+<circle cx="9" cy="10" r="1" fill="#000" stroke="#000" stroke-linecap="round"/>
+<circle cx="15" cy="10" r="1" fill="#000" stroke="#000" stroke-linecap="round"/>
+</svg>

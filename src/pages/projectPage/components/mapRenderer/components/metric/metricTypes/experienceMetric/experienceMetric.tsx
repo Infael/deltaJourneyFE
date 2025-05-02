@@ -1,22 +1,32 @@
 import { updateExperienceMetricValueCommand } from "@/lib/project/commands/metricCommands/experienceMetricCommands/updateExperienceMetricValueCommand";
 import { ExperienceMetricData } from "@/lib/project/models/metrics";
+import { MetricInfoExperience } from "@/lib/project/models/project";
 import { projectWriteAtom } from "@/state/projectWriteAtom";
-import { useAtom } from "jotai";
+import { viewAtom } from "@/state/viewAtom";
+import { useAtom, useAtomValue } from "jotai";
 import { FC, useEffect, useMemo, useRef, useState } from "react";
-import { MapCell } from "../../mapCell";
-import { MetricDataWithTouchpoint } from "../metric";
+import { MapCell } from "../../../mapCell";
+import { MetricDataWithTouchpoint } from "../../metric";
+import { Circle } from "./circle";
+import { Line } from "./line";
+
+import happy from "./assets/happy.svg";
+import neutral from "./assets/neutral.svg";
+import sad from "./assets/sad.svg";
 
 interface ExperienceMetricProps {
+  metricInfo: MetricInfoExperience;
   metricData: MetricDataWithTouchpoint<ExperienceMetricData>[];
   height: number;
 }
 
-export const ExperienceMetric: FC<ExperienceMetricProps> = ({ metricData, height }) => {
+export const ExperienceMetric: FC<ExperienceMetricProps> = ({ metricInfo, metricData, height }) => {
   const [, updateProject] = useAtom(projectWriteAtom);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [cellWidths, setCellWidths] = useState<number[]>([]);
   const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
+  const { presentationMode } = useAtomValue(viewAtom);
 
   const onPointChange = (index: number, value: number) => {
     updateProject((prev) => {
@@ -41,7 +51,7 @@ export const ExperienceMetric: FC<ExperienceMetricProps> = ({ metricData, height
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      if (draggingIndex === null || !containerRef.current) return;
+      if (draggingIndex === null || !containerRef.current || presentationMode) return;
 
       const bounds = containerRef.current.getBoundingClientRect();
       const relativeY = e.clientY - bounds.top;
@@ -96,7 +106,7 @@ export const ExperienceMetric: FC<ExperienceMetricProps> = ({ metricData, height
     let d = `M ${fullPoints[0].x},${chartHeight} `;
     d += `L ${fullPoints[0].x},${fullPoints[0].y} `;
 
-    const sharpnessFactor = 0.35;
+    const sharpnessFactor = metricInfo.path.curveSmoothness;
 
     for (let i = 0; i < fullPoints.length - 1; i++) {
       const p0 = fullPoints[i];
@@ -141,31 +151,48 @@ export const ExperienceMetric: FC<ExperienceMetricProps> = ({ metricData, height
         <svg width="100%" height={height} style={{ position: "absolute", top: 0, left: 0 }}>
           <defs>
             <linearGradient id="experienceGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="blue" stopOpacity="0.4" />
-              <stop offset="100%" stopColor="blue" stopOpacity="0" />
+              <stop offset="0%" stopColor={metricInfo.path.color} stopOpacity="0.4" />
+              <stop offset="100%" stopColor={metricInfo.path.color} stopOpacity="0" />
             </linearGradient>
           </defs>
-          <path d={pathData} fill="url(#experienceGradient)" stroke="blue" strokeWidth="2" />
+          <path d={pathData} fill="url(#experienceGradient)" stroke={metricInfo.path.color} strokeWidth="2" />
+          {!metricInfo.lines.hidden && (
+            <>
+              <Line height={height * metricInfo.lines.firstValue} />
+              <Line height={height * metricInfo.lines.secondValue} />
+            </>
+          )}
           {hoverPoints.map((point, idx) => (
-            <circle
-              key={idx}
-              cx={point.x}
-              cy={point.y}
-              r={4}
-              fill="white"
-              stroke="blue"
-              strokeWidth="2"
-              style={{ transition: "transform 0.2s", transformOrigin: "center center", cursor: "grab" }}
-              onMouseEnter={(e) => {
-                (e.target as SVGCircleElement).setAttribute("r", "7");
-              }}
-              onMouseLeave={(e) => {
-                (e.target as SVGCircleElement).setAttribute("r", "4");
-              }}
-              onMouseDown={() => {
-                setDraggingIndex(idx);
-              }}
-            />
+            <>
+              <Circle key={idx} cx={point.x} cy={point.y} onMouseDown={() => setDraggingIndex(idx)} />
+              {!metricInfo.emojis.hidden && (
+                <image
+                  href={
+                    point.y < height * metricInfo.lines.firstValue
+                      ? happy
+                      : point.y < height * metricInfo.lines.secondValue
+                        ? neutral
+                        : sad
+                  }
+                  x={point.x - 16}
+                  y={point.y - 36 <= 0 ? point.y + 6 : point.y - 40}
+                  height="32"
+                  width="32"
+                  style={
+                    metricInfo.emojis.colors
+                      ? {
+                          filter:
+                            point.y < height * metricInfo.lines.firstValue
+                              ? "invert(41%) sepia(87%) saturate(1000%) hue-rotate(70deg) brightness(95%) contrast(110%)"
+                              : point.y < height * metricInfo.lines.secondValue
+                                ? ""
+                                : "invert(35%) sepia(93%) saturate(1200%) hue-rotate(-10deg) brightness(95%) contrast(110%)",
+                        }
+                      : {}
+                  }
+                />
+              )}
+            </>
           ))}
         </svg>
       </div>

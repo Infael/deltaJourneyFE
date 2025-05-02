@@ -22,12 +22,31 @@ export interface ProjectVersion {
   touchpoints: Touchpoint[];
 }
 
-export interface MetricInfo {
+export interface MetricInfoBase {
   id: string;
   key: MetricType;
   label: string;
   height: number;
 }
+
+export interface MetricInfoExperience extends MetricInfoBase {
+  key: MetricType.EXPERIENCE;
+  path: {
+    color: string;
+    curveSmoothness: number;
+  };
+  lines: {
+    hidden: boolean;
+    firstValue: number;
+    secondValue: number;
+  };
+  emojis: {
+    hidden: boolean;
+    colors: boolean;
+  };
+}
+
+export type MetricInfo = MetricInfoBase | MetricInfoExperience;
 
 export interface Touchpoint {
   id: string;

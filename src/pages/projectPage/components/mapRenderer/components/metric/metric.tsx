@@ -8,13 +8,14 @@ import {
 import { deleteMetricCommand } from "@/lib/project/commands/metricCommands/deleteMetricCommand";
 import { moveMetricCommand } from "@/lib/project/commands/metricCommands/moveMetricCommand";
 import { ExperienceMetricData, MetricData, MetricType, TextMetricData } from "@/lib/project/models/metrics";
-import { MetricInfo, Touchpoint } from "@/lib/project/models/project";
+import { MetricInfo, MetricInfoExperience, Touchpoint } from "@/lib/project/models/project";
 import { projectWriteAtom } from "@/state/projectWriteAtom";
 import { viewAtom } from "@/state/viewAtom";
 import { useAtom, useAtomValue } from "jotai";
 import { FC, useMemo, useState } from "react";
 import { MapCell } from "../mapCell";
-import { ExperienceMetric } from "./metricTypes/experienceMetric";
+import { ExperienceMetric } from "./metricTypes/experienceMetric/experienceMetric";
+import { ExperienceMetricMenu } from "./metricTypes/experienceMetric/experienceMetricMenu";
 import { TextMetric } from "./metricTypes/textMetric";
 import { RenameMetricModal } from "./renameMetricModal";
 
@@ -52,6 +53,7 @@ export const Metric: FC<MetricProps> = ({ metricInfo, touchpoints, metrics }) =>
       case MetricType.EXPERIENCE:
         return (
           <ExperienceMetric
+            metricInfo={metricInfo as MetricInfoExperience}
             metricData={metricData as MetricDataWithTouchpoint<ExperienceMetricData>[]}
             height={metricInfo.height}
           />
@@ -128,6 +130,7 @@ export const Metric: FC<MetricProps> = ({ metricInfo, touchpoints, metrics }) =>
               >
                 Delete
               </DropdownMenuItem>
+              {metricInfo.key === MetricType.EXPERIENCE && <ExperienceMetricMenu />}
             </DropdownMenuContent>
           </DropdownMenu>
           <div>
