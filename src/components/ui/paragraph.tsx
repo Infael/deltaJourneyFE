@@ -5,7 +5,7 @@ const ParagraphVariants = cva("", {
   variants: {
     variant: {
       default: "",
-      faded: "text-gray-500",
+      faded: "text-gray-300",
     },
     size: {
       default: "text-base leading-6",

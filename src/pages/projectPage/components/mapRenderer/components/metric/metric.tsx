@@ -7,7 +7,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { deleteMetricCommand } from "@/lib/project/commands/metricCommands/deleteMetricCommand";
 import { moveMetricCommand } from "@/lib/project/commands/metricCommands/moveMetricCommand";
-import { ExperienceMetricData, MetricData, MetricType, TextMetricData } from "@/lib/project/models/metrics";
+import {
+  ExperienceMetricData,
+  MetricData,
+  MetricType,
+  NumericMetricData,
+  TextMetricData,
+} from "@/lib/project/models/metrics";
 import { MetricInfo, MetricInfoExperience, Touchpoint } from "@/lib/project/models/project";
 import { projectWriteAtom } from "@/state/projectWriteAtom";
 import { viewAtom } from "@/state/viewAtom";
@@ -16,7 +22,8 @@ import { FC, useMemo, useState } from "react";
 import { MapCell } from "../mapCell";
 import { ExperienceMetric } from "./metricTypes/experienceMetric/experienceMetric";
 import { ExperienceMetricMenu } from "./metricTypes/experienceMetric/experienceMetricMenu";
-import { TextMetric } from "./metricTypes/textMetric";
+import { NumericMetric } from "./metricTypes/numericMetric/numericMetric";
+import { TextMetric } from "./metricTypes/textMetric/textMetric";
 import { RenameMetricModal } from "./renameMetricModal";
 
 interface MetricProps {
@@ -55,6 +62,12 @@ export const Metric: FC<MetricProps> = ({ metricInfo, touchpoints, metrics }) =>
           <ExperienceMetric
             metricInfo={metricInfo as MetricInfoExperience}
             metricData={metricData as MetricDataWithTouchpoint<ExperienceMetricData>[]}
+          />
+        );
+      case MetricType.NUMERIC:
+        return (
+          <NumericMetric
+            metricData={metricData as MetricDataWithTouchpoint<NumericMetricData>[]}
             height={metricInfo.height}
           />
         );

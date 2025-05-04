@@ -4,7 +4,7 @@ import { MetricInfoExperience } from "@/lib/project/models/project";
 import { projectWriteAtom } from "@/state/projectWriteAtom";
 import { viewAtom } from "@/state/viewAtom";
 import { useAtom, useAtomValue } from "jotai";
-import { FC, useEffect, useMemo, useRef, useState } from "react";
+import { FC, Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { MapCell } from "../../../mapCell";
 import { MetricDataWithTouchpoint } from "../../metric";
 import { Circle } from "./circle";
@@ -17,10 +17,9 @@ import sad from "./assets/sad.svg";
 interface ExperienceMetricProps {
   metricInfo: MetricInfoExperience;
   metricData: MetricDataWithTouchpoint<ExperienceMetricData>[];
-  height: number;
 }
 
-export const ExperienceMetric: FC<ExperienceMetricProps> = ({ metricInfo, metricData, height }) => {
+export const ExperienceMetric: FC<ExperienceMetricProps> = ({ metricInfo, metricData }) => {
   const [, updateProject] = useAtom(projectWriteAtom);
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -57,9 +56,9 @@ export const ExperienceMetric: FC<ExperienceMetricProps> = ({ metricInfo, metric
       const relativeY = e.clientY - bounds.top;
 
       // Clamp the Y value to be within the bounds of the chart
-      const clampedY = Math.max(0, Math.min(relativeY, height));
+      const clampedY = Math.max(0, Math.min(relativeY, metricInfo.height));
       // Calculate the new value based on the Y position
-      const newValue = 100 - (clampedY / height) * 100;
+      const newValue = 100 - (clampedY / metricInfo.height) * 100;
 
       onPointChange(draggingIndex, newValue);
     };
@@ -77,7 +76,7 @@ export const ExperienceMetric: FC<ExperienceMetricProps> = ({ metricInfo, metric
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [draggingIndex, height]);
+  }, [draggingIndex, metricInfo.height]);
 
   const pathData = useMemo(() => {
     if (cellWidths.length === 0) return "";
@@ -88,7 +87,7 @@ export const ExperienceMetric: FC<ExperienceMetricProps> = ({ metricInfo, metric
       return acc;
     }, []);
 
-    const chartHeight = height;
+    const chartHeight = metricInfo.height;
 
     const points = metricData.map((d, idx) => {
       const value = d.metricData && typeof d.metricData.value === "number" ? d.metricData.value : 50;
@@ -124,7 +123,7 @@ export const ExperienceMetric: FC<ExperienceMetricProps> = ({ metricInfo, metric
     d += `Z`;
 
     return d;
-  }, [metricData, height, cellWidths]);
+  }, [metricData, metricInfo.height, cellWidths]);
 
   const hoverPoints = useMemo(() => {
     if (cellWidths.length === 0) return [];
@@ -135,7 +134,7 @@ export const ExperienceMetric: FC<ExperienceMetricProps> = ({ metricInfo, metric
       return acc;
     }, []);
 
-    const chartHeight = height;
+    const chartHeight = metricInfo.height;
 
     return metricData.map((d, idx) => {
       const value = d.metricData && typeof d.metricData.value === "number" ? d.metricData.value : 50;
@@ -143,12 +142,12 @@ export const ExperienceMetric: FC<ExperienceMetricProps> = ({ metricInfo, metric
       const y = chartHeight - (value / 100) * chartHeight;
       return { x, y };
     });
-  }, [metricData, height, cellWidths]);
+  }, [metricData, metricInfo.height, cellWidths]);
 
   return (
     <MapCell gridSize={metricData.length} className="p-0">
-      <div ref={containerRef} style={{ position: "relative", width: "100%", height: `${height}px` }}>
-        <svg width="100%" height={height} style={{ position: "absolute", top: 0, left: 0 }}>
+      <div ref={containerRef} style={{ position: "relative", width: "100%", height: `${metricInfo.height}px` }}>
+        <svg width="100%" height={metricInfo.height} style={{ position: "absolute", top: 0, left: 0 }}>
           <defs>
             <linearGradient id="experienceGradient" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor={metricInfo.path.color} stopOpacity="0.4" />
@@ -158,19 +157,19 @@ export const ExperienceMetric: FC<ExperienceMetricProps> = ({ metricInfo, metric
           <path d={pathData} fill="url(#experienceGradient)" stroke={metricInfo.path.color} strokeWidth="2" />
           {!metricInfo.lines.hidden && (
             <>
-              <Line height={height * metricInfo.lines.firstValue} />
-              <Line height={height * metricInfo.lines.secondValue} />
+              <Line height={metricInfo.height * metricInfo.lines.firstValue} />
+              <Line height={metricInfo.height * metricInfo.lines.secondValue} />
             </>
           )}
           {hoverPoints.map((point, idx) => (
-            <>
-              <Circle key={idx} cx={point.x} cy={point.y} onMouseDown={() => setDraggingIndex(idx)} />
+            <Fragment key={idx}>
+              <Circle cx={point.x} cy={point.y} onMouseDown={() => setDraggingIndex(idx)} />
               {!metricInfo.emojis.hidden && (
                 <image
                   href={
-                    point.y < height * metricInfo.lines.firstValue
+                    point.y < metricInfo.height * metricInfo.lines.firstValue
                       ? happy
-                      : point.y < height * metricInfo.lines.secondValue
+                      : point.y < metricInfo.height * metricInfo.lines.secondValue
                         ? neutral
                         : sad
                   }
@@ -182,9 +181,9 @@ export const ExperienceMetric: FC<ExperienceMetricProps> = ({ metricInfo, metric
                     metricInfo.emojis.colors
                       ? {
                           filter:
-                            point.y < height * metricInfo.lines.firstValue
+                            point.y < metricInfo.height * metricInfo.lines.firstValue
                               ? "invert(41%) sepia(87%) saturate(1000%) hue-rotate(70deg) brightness(95%) contrast(110%)"
-                              : point.y < height * metricInfo.lines.secondValue
+                              : point.y < metricInfo.height * metricInfo.lines.secondValue
                                 ? ""
                                 : "invert(35%) sepia(93%) saturate(1200%) hue-rotate(-10deg) brightness(95%) contrast(110%)",
                         }
@@ -192,7 +191,7 @@ export const ExperienceMetric: FC<ExperienceMetricProps> = ({ metricInfo, metric
                   }
                 />
               )}
-            </>
+            </Fragment>
           ))}
         </svg>
       </div>

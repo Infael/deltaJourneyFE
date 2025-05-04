@@ -1,36 +1,37 @@
 import { useFieldContext } from "@/hooks/useForm";
 import { cn } from "@/lib/utils";
 import { FC } from "react";
-import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Paragraph } from "../ui/paragraph";
+import { Slider } from "../ui/slider";
 
-interface TextFieldProps {
+interface SliderFieldProps {
   label?: string;
-  placeholder?: string;
-  type?: string;
+  max?: number;
+  min?: number;
 }
 
-export const TextField: FC<TextFieldProps> = ({ label, placeholder, type }) => {
-  const field = useFieldContext<string>();
+export const SliderField: FC<SliderFieldProps> = ({ label, max, min }) => {
+  const field = useFieldContext<number>();
 
   return (
     <div className="flex flex-1 flex-col gap-1">
       <div className="flex items-center gap-2">
         {label && (
           <Label htmlFor={field.name} className="flex-1">
-            {label}
+            {label} {field.state.value}
           </Label>
         )}
-        <Input
+        <Slider
           id={field.name}
-          value={field.state.value}
-          onChange={(e) => {
-            field.handleChange(e.target.value);
+          value={[field.state.value]}
+          max={max}
+          min={min}
+          step={1}
+          onValueChange={(e) => {
+            field.handleChange(e[0]);
           }}
           className={cn(field.state.meta.errors.length > 0 ? "border-red-500" : "", "flex-2")}
-          placeholder={placeholder}
-          type={type ?? "text"}
         />
       </div>
       {field.state.meta.errors.length > 0 && (

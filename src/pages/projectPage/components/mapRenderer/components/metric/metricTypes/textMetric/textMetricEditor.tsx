@@ -1,5 +1,4 @@
 import { cn } from "@/lib/utils";
-import { viewAtom } from "@/state/viewAtom";
 import { Color } from "@tiptap/extension-color";
 
 import { updateTextMetricValueCommand } from "@/lib/project/commands/metricCommands/textMetricCommands/updateTextMetricValueCommand";
@@ -9,14 +8,9 @@ import Highlight from "@tiptap/extension-highlight";
 import TextStyle from "@tiptap/extension-text-style";
 import { BubbleMenu, EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useSetAtom } from "jotai";
 import { FC, useEffect } from "react";
-import { MapCell } from "../../mapCell";
-import { MetricDataWithTouchpoint } from "../metric";
-
-interface TextMetricProps {
-  metricData: MetricDataWithTouchpoint<TextMetricData>[];
-}
+import { MetricDataWithTouchpoint } from "../../metric";
 
 const GREEN = "#008000";
 const RED = "#ff5454";
@@ -144,19 +138,4 @@ export const TextMetricEditor: FC<TextMetricEditorProps> = ({ data }) => {
       </>
     )
   );
-};
-
-export const TextMetric: FC<TextMetricProps> = ({ metricData: data }) => {
-  const { presentationMode } = useAtomValue(viewAtom);
-
-  return data.map((metric, index) => (
-    <MapCell key={`${metric.metricData?.id}_${index}`} className="overflow-visible">
-      {presentationMode && metric.metricData && (
-        <p className="text-center text-sm" dangerouslySetInnerHTML={{ __html: metric.metricData.value }}></p>
-      )}
-      <div className={presentationMode ? "hidden" : ""}>
-        <TextMetricEditor data={metric} />
-      </div>
-    </MapCell>
-  ));
 };

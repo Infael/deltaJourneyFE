@@ -6,14 +6,16 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 
 interface SelectFieldProps {
   label?: string;
+  placeholder?: string;
   items: {
     label: string;
     value: string;
+    disabled?: boolean;
   }[];
   defaultValue?: string;
 }
 
-export const SelectField: FC<SelectFieldProps> = ({ label, items, defaultValue }) => {
+export const SelectField: FC<SelectFieldProps> = ({ label, placeholder, items, defaultValue }) => {
   const field = useFieldContext<string>();
 
   return (
@@ -29,12 +31,12 @@ export const SelectField: FC<SelectFieldProps> = ({ label, items, defaultValue }
         defaultValue={defaultValue ?? items[0].value}
       >
         <SelectTrigger id={field.name} className="w-full flex-2">
-          <SelectValue defaultValue={field.state.value} />
+          <SelectValue defaultValue={field.state.value} placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
             {items.map((item) => (
-              <SelectItem key={`${field.name}-${item.value}`} value={item.value}>
+              <SelectItem key={`${field.name}-${item.value}`} value={item.value} disabled={item.disabled}>
                 {item.label}
               </SelectItem>
             ))}

@@ -13,12 +13,18 @@ export const useAuth = () => {
 
   const login = useGoogleLogin({
     flow: "implicit",
-    scope: "https://www.googleapis.com/auth/drive.file",
+    scope: [
+      "https://www.googleapis.com/auth/drive.file",
+      "https://www.googleapis.com/auth/analytics.readonly",
+      "https://www.googleapis.com/auth/analytics.edit",
+    ].join(" "),
     onSuccess: (data) => {
       if (data.access_token) {
+        console.log("Login Successful:", data);
         sessionStorage.setItem("access_token", data.access_token);
         sessionStorage.setItem("expiration", String(Date.now() + data.expires_in * 1000));
         setAuthAtom({ authenticated: true });
+
         navigate("/projects");
       }
     },

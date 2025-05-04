@@ -37,7 +37,7 @@ export const NewMetricButton: FC<NewMetricButtonProps> = ({ gridSize }) => {
     validators: {
       onChange: z.object({
         name: z.string().min(1, "Metric name is required").max(64, "Metric name is too long"),
-        type: z.enum([MetricType.TEXT, MetricType.EXPERIENCE]),
+        type: z.enum([MetricType.TEXT, MetricType.EXPERIENCE, MetricType.NUMERIC]),
       }),
     },
     onSubmit: (data) => {
@@ -55,6 +55,19 @@ export const NewMetricButton: FC<NewMetricButtonProps> = ({ gridSize }) => {
       });
     },
   });
+
+  const getMetricTypeDescription = (metricType: MetricType) => {
+    switch (metricType) {
+      case MetricType.TEXT:
+        return "Use this metric to capture qualitative insights, notes, or open-ended feedback for each touchpoint.";
+      case MetricType.EXPERIENCE:
+        return "This metric represents a visual graph of customer sentiment across the journey. Values can be adjusted manually to reflect emotional highs and lows.";
+      case MetricType.NUMERIC:
+        return "Use this metric to track numerical values at each touchpoint, such as conversion rates, time spent, or custom KPIs. Data can be imported or entered manually.";
+      default:
+        return "";
+    }
+  };
 
   if (presentationMode) {
     return null;
@@ -75,7 +88,7 @@ export const NewMetricButton: FC<NewMetricButtonProps> = ({ gridSize }) => {
             <DialogDescription className="hidden">Dialog for adding new metric</DialogDescription>
           </DialogHeader>
           <form
-            className="flex flex-col gap-8"
+            className="flex flex-col gap-2"
             onSubmit={(e) => {
               e.preventDefault();
               form.handleSubmit();
@@ -91,12 +104,21 @@ export const NewMetricButton: FC<NewMetricButtonProps> = ({ gridSize }) => {
                   items={[
                     { label: "Text", value: MetricType.TEXT },
                     { label: "Experience", value: MetricType.EXPERIENCE },
+                    {
+                      label: "Numeric",
+                      value: MetricType.NUMERIC,
+                    },
                   ]}
                 />
               )}
             </form.AppField>
+            <form.Subscribe selector={(state) => state.values.type}>
+              {(type) => <Paragraph size="small">{getMetricTypeDescription(type)}</Paragraph>}
+            </form.Subscribe>
             <DialogClose asChild>
-              <Button type="submit">Create</Button>
+              <Button type="submit" className="mt-4">
+                Create
+              </Button>
             </DialogClose>
           </form>
         </DialogContent>

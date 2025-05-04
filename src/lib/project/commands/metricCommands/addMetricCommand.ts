@@ -13,6 +13,7 @@ export const addMetricCommand = (project: Project, data: CommandData): Project =
   let newMetric: MetricInfo;
   switch (data.metricKey) {
     case MetricType.TEXT:
+    case MetricType.NUMERIC:
       newMetric = {
         id: crypto.randomUUID(),
         label: data.name,
