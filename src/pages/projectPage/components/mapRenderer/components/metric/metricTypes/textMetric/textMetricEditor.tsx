@@ -6,7 +6,7 @@ import { TextMetricData } from "@/lib/project/models/metrics";
 import { projectWriteAtom } from "@/state/projectWriteAtom";
 import Highlight from "@tiptap/extension-highlight";
 import TextStyle from "@tiptap/extension-text-style";
-import { BubbleMenu, EditorContent, useEditor } from "@tiptap/react";
+import { BubbleMenu, Editor, EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { useSetAtom } from "jotai";
 import { FC, useEffect } from "react";
@@ -26,23 +26,28 @@ export const TextMetricEditor: FC<TextMetricEditorProps> = ({ data }) => {
   const extensions = [Color.configure({ types: [TextStyle.name] }), TextStyle, StarterKit, Highlight];
   const updateProject = useSetAtom(projectWriteAtom);
 
+  const handleUpdate = (editor: Editor) => {
+    updateProject((prev) => {
+      const newProject = updateTextMetricValueCommand(prev.project, {
+        metricId: data.metricData?.id ?? data.metricId,
+        touchpointId: data.touchpointId,
+        value: editor.isEmpty ? "" : editor.getHTML(),
+        versionId: prev.actualShowedVersion,
+      });
+
+      return {
+        ...prev,
+        project: newProject,
+      };
+    });
+  };
+
   const editor = useEditor({
     extensions,
-    content: data?.metricData?.value ?? DEFAULT_CONTENT,
+    content: data.metricData && data.metricData.value !== "" ? data.metricData.value : DEFAULT_CONTENT,
     onUpdate: ({ editor }) => {
-      updateProject((prev) => {
-        const newProject = updateTextMetricValueCommand(prev.project, {
-          metricId: data.metricData?.id ?? data.metricId,
-          touchpointId: data.touchpointId,
-          value: editor.getHTML(),
-          versionId: prev.actualShowedVersion,
-        });
-
-        return {
-          ...prev,
-          project: newProject,
-        };
-      });
+      if (!data.metricData) return;
+      handleUpdate(editor);
     },
     onFocus: ({ editor }) => {
       if (editor.getHTML() === DEFAULT_CONTENT) {
@@ -52,6 +57,8 @@ export const TextMetricEditor: FC<TextMetricEditorProps> = ({ data }) => {
     onBlur: ({ editor }) => {
       if (editor.isEmpty) {
         editor.commands.setContent(DEFAULT_CONTENT);
+      } else if (!data.metricData) {
+        handleUpdate(editor);
       }
     },
   });
@@ -60,7 +67,9 @@ export const TextMetricEditor: FC<TextMetricEditorProps> = ({ data }) => {
   // we need to change it manually
   useEffect(() => {
     if (editor && data?.metricData?.value !== editor.getHTML()) {
-      editor.commands.setContent(data?.metricData?.value ?? DEFAULT_CONTENT);
+      editor.commands.setContent(
+        data.metricData && data.metricData.value !== "" ? data.metricData.value : DEFAULT_CONTENT,
+      );
     }
   }, [data]);
 

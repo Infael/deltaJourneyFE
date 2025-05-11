@@ -46,10 +46,7 @@ export const OpenLocallyCard = () => {
     <>
       <input id="file" className="hidden" type="file" accept=".dj" onChange={handleFileChange} />
       <label htmlFor="file">
-        <Card
-          className="hover:translate-x-boxShadowX hover:translate-y-boxShadowY w-64 cursor-default hover:shadow-none"
-          onClick={() => {}}
-        >
+        <Card className="hover:translate-x-boxShadowX hover:translate-y-boxShadowY w-64 cursor-default hover:shadow-none">
           <div className="flex flex-col items-center justify-center gap-4 px-4 py-8">
             <img
               src={thisDeviceIcon}

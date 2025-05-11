@@ -1,16 +1,60 @@
 import {
-  DropdownMenuItem,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Paragraph } from "@/components/ui/paragraph";
-import { Slider } from "@/components/ui/slider";
+import { useAppForm } from "@/hooks/useForm";
+import { updateExperienceMetricMetadataCommand } from "@/lib/project/commands/metricCommands/experienceMetricCommands/updateExperienceMetricMetadataCommand";
+import { MetricInfoExperience } from "@/lib/project/models/project";
+import { projectWriteAtom } from "@/state/projectWriteAtom";
+import { useAtom } from "jotai";
+import { FC } from "react";
+import { z } from "zod";
 
-export const ExperienceMetricMenu = () => {
+interface ExperienceMetricMenuProps {
+  metricInfo: MetricInfoExperience;
+}
+
+export const ExperienceMetricMenu: FC<ExperienceMetricMenuProps> = ({ metricInfo }) => {
+  const [, updateProject] = useAtom(projectWriteAtom);
+
+  const form = useAppForm({
+    defaultValues: {
+      path: metricInfo.path,
+      lines: metricInfo.lines,
+      emojis: metricInfo.emojis,
+    },
+    validators: {
+      onChange: z.object({
+        path: z.object({
+          color: z.string(),
+          curveSmoothness: z.number(),
+        }),
+        lines: z.object({
+          hidden: z.boolean(),
+          firstValue: z.number(),
+          secondValue: z.number(),
+        }),
+        emojis: z.object({
+          hidden: z.boolean(),
+          colors: z.boolean(),
+        }),
+      }),
+    },
+    onSubmit: (value) => {
+      updateProject((prev) => {
+        return {
+          ...prev,
+          project: updateExperienceMetricMetadataCommand(prev.project, {
+            versionId: prev.actualShowedVersion,
+            updatedValues: { ...metricInfo, ...value.value },
+          }),
+        };
+      });
+    },
+  });
+
   return (
     <>
       <DropdownMenuSeparator />
@@ -20,37 +64,57 @@ export const ExperienceMetricMenu = () => {
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>Path</DropdownMenuSubTrigger>
             <DropdownMenuSubContent>
-              <div className="flex flex-col gap-1 px-2">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                }}
+                onInput={(e) => {
+                  e.preventDefault();
+                  form.handleSubmit();
+                }}
+                className="flex flex-col gap-1 px-2"
+              >
                 <div className="flex items-center justify-between">
-                  <Paragraph>Color</Paragraph> <input type="color" />
+                  <form.AppField name="path.color">
+                    {(field) => <field.TextField label="Color" type="color" />}
+                  </form.AppField>
                 </div>
                 <DropdownMenuSeparator />
-                <Paragraph>Curve smoothness</Paragraph>
-                <Slider className="py-1" />
-              </div>
+                <form.AppField name="path.curveSmoothness">
+                  {(field) => (
+                    <field.SliderField label="Curve smoothness" showValue={false} min={0} max={1} step={0.05} />
+                  )}
+                </form.AppField>
+              </form>
             </DropdownMenuSubContent>
           </DropdownMenuSub>
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>Lines</DropdownMenuSubTrigger>
             <DropdownMenuSubContent>
-              <DropdownMenuItem>Hide</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuRadioGroup value="33">
-                <DropdownMenuRadioItem value="33">33% - 66%</DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="40">40% - 60%</DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="50">50%</DropdownMenuRadioItem>
-              </DropdownMenuRadioGroup>
+              <form
+                onChange={(e) => {
+                  e.preventDefault();
+                  form.handleSubmit();
+                }}
+                className="flex flex-col justify-between px-2 py-1"
+              >
+                <form.AppField name="lines.hidden">{(field) => <field.CheckboxField label="Hidden" />}</form.AppField>
+              </form>
             </DropdownMenuSubContent>
           </DropdownMenuSub>
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>Emojis</DropdownMenuSubTrigger>
             <DropdownMenuSubContent>
-              <DropdownMenuItem>Hide</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuRadioGroup value="black">
-                <DropdownMenuRadioItem value="black">Black</DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="colors">Color</DropdownMenuRadioItem>
-              </DropdownMenuRadioGroup>
+              <form
+                onChange={(e) => {
+                  e.preventDefault();
+                  form.handleSubmit();
+                }}
+                className="flex flex-col justify-between gap-2 px-2 py-1"
+              >
+                <form.AppField name="emojis.hidden">{(field) => <field.CheckboxField label="Hidden" />}</form.AppField>
+                <form.AppField name="emojis.colors">{(field) => <field.CheckboxField label="Colors" />}</form.AppField>
+              </form>
             </DropdownMenuSubContent>
           </DropdownMenuSub>
         </DropdownMenuSubContent>

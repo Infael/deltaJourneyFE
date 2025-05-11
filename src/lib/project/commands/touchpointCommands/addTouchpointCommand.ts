@@ -1,6 +1,6 @@
 import { Project, Touchpoint } from "../../models/project";
 
-const DEFAULT_TOUCHPOINT_WIDTH = 100;
+const DEFAULT_TOUCHPOINT_WIDTH = 142;
 
 interface CommandData {
   name: string;

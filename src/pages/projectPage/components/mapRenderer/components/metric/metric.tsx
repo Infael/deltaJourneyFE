@@ -143,7 +143,9 @@ export const Metric: FC<MetricProps> = ({ metricInfo, touchpoints, metrics }) =>
               >
                 Delete
               </DropdownMenuItem>
-              {metricInfo.key === MetricType.EXPERIENCE && <ExperienceMetricMenu />}
+              {metricInfo.key === MetricType.EXPERIENCE && (
+                <ExperienceMetricMenu metricInfo={metricInfo as MetricInfoExperience} />
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
           <div>

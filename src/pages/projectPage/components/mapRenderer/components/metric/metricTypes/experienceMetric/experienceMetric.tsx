@@ -163,7 +163,12 @@ export const ExperienceMetric: FC<ExperienceMetricProps> = ({ metricInfo, metric
           )}
           {hoverPoints.map((point, idx) => (
             <Fragment key={idx}>
-              <Circle cx={point.x} cy={point.y} onMouseDown={() => setDraggingIndex(idx)} />
+              <Circle
+                cx={point.x}
+                cy={point.y}
+                color={metricInfo.path.color}
+                onMouseDown={() => setDraggingIndex(idx)}
+              />
               {!metricInfo.emojis.hidden && (
                 <image
                   href={

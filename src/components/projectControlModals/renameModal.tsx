@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useAppForm } from "@/hooks/useForm";
 import { projectAtom } from "@/state/projectAtom";
-import { useAtom } from "jotai";
+import { projectWriteAtom } from "@/state/projectWriteAtom";
+import { useAtom, useAtomValue } from "jotai";
 import { FC } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -18,7 +19,8 @@ interface RenameModalProps {
 
 export const RenameModal: FC<RenameModalProps> = ({ projectId, projectName, open, setOpen }) => {
   const { mutateAsync: renameFile, isPending } = useDriveFilesUpdate();
-  const [projectData, setProjectData] = useAtom(projectAtom);
+  const projectData = useAtomValue(projectAtom);
+  const [, updateProject] = useAtom(projectWriteAtom);
 
   const form = useAppForm({
     defaultValues: {
@@ -31,10 +33,10 @@ export const RenameModal: FC<RenameModalProps> = ({ projectId, projectName, open
     },
     onSubmit: (values) => {
       if (projectData.current.projectStorage === "local") {
-        setProjectData((prev) => ({
+        updateProject((prev) => ({
           ...prev,
           projectMetadata: {
-            ...prev.current.projectMetadata,
+            ...prev.projectMetadata,
             name: values.value.projectName,
           },
         }));
@@ -52,10 +54,10 @@ export const RenameModal: FC<RenameModalProps> = ({ projectId, projectName, open
           {
             onSuccess: () => {
               queryClient.invalidateQueries({ queryKey: getDriveFilesListQueryKey() });
-              setProjectData((prev) => ({
+              updateProject((prev) => ({
                 ...prev,
                 projectMetadata: {
-                  ...prev.current.projectMetadata,
+                  ...prev.projectMetadata,
                   name: values.value.projectName,
                 },
               }));
