@@ -14,10 +14,11 @@ export interface Project {
 export interface ProjectVersion {
   id: string;
   name: string;
+  startDate: string;
+  endDate: string;
   createdTime: string;
   modifiedTime: string;
   description: string;
-
   metrics: MetricInfo[];
   touchpoints: Touchpoint[];
 }

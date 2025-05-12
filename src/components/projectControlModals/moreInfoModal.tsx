@@ -28,11 +28,11 @@ export const MoreInfoModal: FC<MoreInfoModalProps> = ({
         </DialogHeader>
         <div className="flex flex-col gap-4">
           <div className="flex flex-row justify-between">
-            <Paragraph variant="faded">Project Name:</Paragraph>
+            <Paragraph className="text-gray-400">Project Name:</Paragraph>
             <Paragraph>{projectName}</Paragraph>
           </div>
           <div className="flex flex-row justify-between">
-            <Paragraph variant="faded">Created At:</Paragraph>
+            <Paragraph className="text-gray-400">Created At:</Paragraph>
             <Paragraph>
               {new Date(createdAt).toLocaleString("sk-SK", {
                 year: "numeric",
@@ -44,7 +44,7 @@ export const MoreInfoModal: FC<MoreInfoModalProps> = ({
             </Paragraph>
           </div>
           <div className="flex flex-row justify-between">
-            <Paragraph variant="faded">Last Modified:</Paragraph>
+            <Paragraph className="text-gray-400">Last Modified:</Paragraph>
             <Paragraph>
               {new Date(lastModified).toLocaleString("sk-SK", {
                 year: "numeric",
@@ -56,7 +56,7 @@ export const MoreInfoModal: FC<MoreInfoModalProps> = ({
             </Paragraph>
           </div>
           <div className="flex flex-row justify-between">
-            <Paragraph variant="faded">Owners:</Paragraph>
+            <Paragraph className="text-gray-400">Owners:</Paragraph>
             <Paragraph>{owners.join(", ")}</Paragraph>
           </div>
         </div>

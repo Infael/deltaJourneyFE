@@ -4,6 +4,9 @@ import { Project, ProjectVersion } from "../models/project";
 export const createEmptyVersion = (): ProjectVersion => ({
   id: uuidv4(),
   name: "Version 1",
+  // start date is today minus 1 month by default
+  startDate: new Date(new Date().setMonth(new Date().getMonth() - 1)).toISOString(),
+  endDate: new Date().toISOString(),
   createdTime: new Date().toISOString(),
   modifiedTime: new Date().toISOString(),
   description: "",
@@ -19,7 +22,7 @@ export const createEmptyProject = (name: string): Project => {
     createdTime: new Date().toISOString(),
     modifiedTime: new Date().toISOString(),
     description: "",
-    versions: [createEmptyVersion()],
+    versions: [],
   };
 };
 

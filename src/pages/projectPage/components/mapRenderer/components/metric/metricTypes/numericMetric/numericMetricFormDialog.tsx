@@ -10,11 +10,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Paragraph } from "@/components/ui/paragraph";
 import { useAppForm } from "@/hooks/useForm";
 import { removeNumericMetricValueCommand } from "@/lib/project/commands/metricCommands/numericMetricCommands/removeNumericMetricCommand";
 import { updateNumericMetricValueCommand } from "@/lib/project/commands/metricCommands/numericMetricCommands/updateNumericMetricCommand";
 import { GAMetricType, MetricType, NumericMetricData, NumericMetricKey } from "@/lib/project/models/metrics";
-import { projectWriteAtom } from "@/state/projectWriteAtom";
+import { currentProjectVersionAtom, projectWriteAtom } from "@/state/projectWriteAtom";
 import { viewAtom } from "@/state/viewAtom";
 import { DialogClose } from "@radix-ui/react-dialog";
 
@@ -36,6 +37,7 @@ export const NumericMetricFormDialog: FC<NumericMetricFormDialogProps> = ({
   touchpointId,
 }) => {
   const { presentationMode } = useAtomValue(viewAtom);
+  const projectVersion = useAtomValue(currentProjectVersionAtom);
   const [, updateProject] = useAtom(projectWriteAtom);
 
   const { data: properties } = useAnalyticsadminAccountSummariesListSuspense();
@@ -222,8 +224,10 @@ export const NumericMetricFormDialog: FC<NumericMetricFormDialogProps> = ({
           data: {
             dateRanges: [
               {
-                startDate: "2025-01-01", // TODO
-                endDate: "2025-12-31",
+                startDate: (
+                  projectVersion?.startDate ?? new Date(new Date().setDate(new Date().getMonth() - 1)).toISOString()
+                ).split("T")[0],
+                endDate: (projectVersion?.endDate ?? new Date().toISOString()).split("T")[0],
               },
             ],
             metrics: [
@@ -420,6 +424,21 @@ export const NumericMetricFormDialog: FC<NumericMetricFormDialogProps> = ({
                         />
                       )}
                     </form.AppField>
+                    <Paragraph size="micro">
+                      The value will be automatically fetched from Google Analytics from current version start date (
+                      {new Date(projectVersion?.startDate ?? "").toLocaleString("sk-SK", {
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                      })}
+                      ) to end date (
+                      {new Date(projectVersion?.endDate ?? "").toLocaleString("sk-SK", {
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                      })}
+                      ).
+                    </Paragraph>
                   </>
                 );
               }

@@ -25,11 +25,31 @@ export const VersionInfoModal: FC<VersionInfoModalProps> = ({ open, setOpen }) =
         </DialogHeader>
         <div className="flex flex-col gap-4">
           <div className="flex flex-row justify-between">
-            <Paragraph variant="faded">Name:</Paragraph>
+            <Paragraph className="text-gray-400">Name:</Paragraph>
             <Paragraph>{currentVersion?.name}</Paragraph>
           </div>
           <div className="flex flex-row justify-between">
-            <Paragraph variant="faded">Created At:</Paragraph>
+            <Paragraph className="text-gray-400">Version measuring data from:</Paragraph>
+            <Paragraph>
+              {new Date(currentVersion?.startDate ?? "").toLocaleString("sk-SK", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+              })}
+            </Paragraph>
+          </div>
+          <div className="flex flex-row justify-between">
+            <Paragraph className="text-gray-400">Version measuring data to:</Paragraph>
+            <Paragraph>
+              {new Date(currentVersion?.endDate ?? "").toLocaleString("sk-SK", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+              })}
+            </Paragraph>
+          </div>
+          <div className="flex flex-row justify-between">
+            <Paragraph className="text-gray-400">Created At:</Paragraph>
             <Paragraph>
               {new Date(currentVersion?.createdTime ?? "").toLocaleString("sk-SK", {
                 year: "numeric",
@@ -41,7 +61,7 @@ export const VersionInfoModal: FC<VersionInfoModalProps> = ({ open, setOpen }) =
             </Paragraph>
           </div>
           <div className="flex flex-row justify-between">
-            <Paragraph variant="faded">Last Modified:</Paragraph>
+            <Paragraph className="text-gray-400">Last Modified:</Paragraph>
             <Paragraph>
               {new Date(currentVersion?.modifiedTime ?? "").toLocaleString("sk-SK", {
                 year: "numeric",

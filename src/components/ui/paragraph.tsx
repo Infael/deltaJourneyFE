@@ -10,7 +10,7 @@ const ParagraphVariants = cva("", {
     size: {
       default: "text-base leading-6",
       small: "text-sm leading-5",
-      micro: "text-xs leading-7",
+      micro: "text-xs leading-4",
       large: "text-lg leading-7",
       extraLarge: "text-xl leading-7",
       xxl: "text-2xl leading-8",

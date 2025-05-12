@@ -3,14 +3,16 @@ import { Spinner } from "@/components/ui/spinner/spinner";
 import { Project } from "@/lib/project/models/project";
 import { projectAtom } from "@/state/projectAtom";
 import { useAtom } from "jotai";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { ControlBar } from "./components/controlBar/controlBar";
+import { NewVersionAlertModal } from "./components/controlBar/controlBarVersionControl/newVersionAlertModal";
 import { MapRenderer } from "./components/mapRenderer/mapRenderer";
 
 export const ProjectPage = () => {
   const { state } = useLocation();
   const [projectData, setProjectData] = useAtom(projectAtom);
+  const [versionModalOpen, setVersionModalOpen] = useState(false);
 
   const { mutateAsync: getDriveFile, isPending } = useDriveFilesGet();
 
@@ -23,9 +25,10 @@ export const ProjectPage = () => {
           current: {
             ...prev.current,
             project: project,
-            actualShowedVersion: project.versions.toSorted(
-              (a, b) => new Date(a.createdTime).getTime() - new Date(b.createdTime).getTime(),
-            )[0].id,
+            actualShowedVersion:
+              project.versions.toSorted(
+                (a, b) => new Date(a.createdTime).getTime() - new Date(b.createdTime).getTime(),
+              )[0].id ?? "",
             projectStorage: "drive",
           },
         }));
@@ -34,6 +37,7 @@ export const ProjectPage = () => {
         console.error("Error fetching file:", error);
       });
   };
+
   const getFileMetadata = (projectId: string) => {
     getDriveFile(
       { fileId: projectId, params: { fields: "id, name, createdTime, modifiedTime, owners" } },
@@ -68,6 +72,12 @@ export const ProjectPage = () => {
     }
   }, [getDriveFile, setProjectData]);
 
+  useEffect(() => {
+    if (projectData.current.actualShowedVersion === "" && projectData.current.project.versions.length === 0) {
+      setVersionModalOpen(true);
+    }
+  }, [projectData]);
+
   if (isPending) {
     return (
       <div className="flex w-screen items-center justify-center py-64">
@@ -80,6 +90,7 @@ export const ProjectPage = () => {
     <div className="flex flex-col">
       <ControlBar />
       <MapRenderer />
+      <NewVersionAlertModal open={versionModalOpen} setOpen={setVersionModalOpen} />
     </div>
   );
 };

@@ -30,7 +30,7 @@ export const OpenLocallyCard = () => {
               owners: [{ displayName: "Local User" }],
             },
             projectStorage: "local",
-            actualShowedVersion: project.versions[0].id,
+            actualShowedVersion: project.versions[0].id ?? "",
           },
           past: [],
           future: [],

@@ -6,6 +6,8 @@ export type CreateNewVersionCommandCreateFrom = "empty" | "lastLayout" | "lastDa
 interface CommandData {
   name: string;
   createFrom: CreateNewVersionCommandCreateFrom;
+  startDate: Date;
+  endDate: Date;
 }
 
 export const createNewVersionProjectCommand = (project: Project, data: CommandData): Project => {
@@ -15,6 +17,8 @@ export const createNewVersionProjectCommand = (project: Project, data: CommandDa
     case "empty":
       newVersion = {
         ...createEmptyVersion(),
+        startDate: data.startDate.toISOString(),
+        endDate: data.endDate.toISOString(),
         name: data.name,
       };
       break;
@@ -22,6 +26,8 @@ export const createNewVersionProjectCommand = (project: Project, data: CommandDa
       newVersion = {
         id: crypto.randomUUID(),
         name: data.name,
+        startDate: data.startDate.toISOString(),
+        endDate: data.endDate.toISOString(),
         createdTime: new Date().toISOString(),
         modifiedTime: new Date().toISOString(),
         description: "",
@@ -40,6 +46,8 @@ export const createNewVersionProjectCommand = (project: Project, data: CommandDa
       newVersion = {
         id: crypto.randomUUID(),
         name: data.name,
+        startDate: data.startDate.toISOString(),
+        endDate: data.endDate.toISOString(),
         createdTime: new Date().toISOString(),
         modifiedTime: new Date().toISOString(),
         description: "",

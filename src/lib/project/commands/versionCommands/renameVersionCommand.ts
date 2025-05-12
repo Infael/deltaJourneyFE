@@ -2,6 +2,8 @@ import { ProjectState } from "@/state/projectAtom";
 
 interface CommandData {
   name: string;
+  startDate: Date;
+  endDate: Date;
 }
 
 export const renameVersionCommand = (project: ProjectState, data: CommandData): ProjectState => {
@@ -15,6 +17,8 @@ export const renameVersionCommand = (project: ProjectState, data: CommandData): 
         return {
           ...version,
           name: data.name,
+          startDate: data.startDate.toISOString(),
+          endDate: data.endDate.toISOString(),
         };
       }
       return version;

@@ -1,22 +1,25 @@
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { useAppForm } from "@/hooks/useForm";
 import {
-  CreateNewVersionCommandCreateFrom,
-  createNewVersionProjectCommand,
-} from "@/lib/project/commands/versionCommands/createNewVersionProjectCommand";
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { useAppForm } from "@/hooks/useForm";
+import { createNewVersionProjectCommand } from "@/lib/project/commands/versionCommands/createNewVersionProjectCommand";
 import { projectAtom } from "@/state/projectAtom";
 import { projectWriteAtom } from "@/state/projectWriteAtom";
 import { useAtom, useAtomValue } from "jotai";
 import { FC } from "react";
 import { z } from "zod";
 
-interface NewVersionModalProps {
+interface NewVersionAlertModalProps {
   open: boolean;
   setOpen: (open: boolean) => void;
 }
 
-export const NewVersionModal: FC<NewVersionModalProps> = ({ open, setOpen }) => {
+export const NewVersionAlertModal: FC<NewVersionAlertModalProps> = ({ open, setOpen }) => {
   const project = useAtomValue(projectAtom);
   const [, updateProject] = useAtom(projectWriteAtom);
 
@@ -25,7 +28,6 @@ export const NewVersionModal: FC<NewVersionModalProps> = ({ open, setOpen }) => 
       name: `Version ${project.current.project.versions.length + 1} - ${new Date().toLocaleDateString()}`,
       startDate: new Date(new Date().setMonth(new Date().getMonth() - 1)),
       endDate: new Date(),
-      createFrom: "lastLayout",
     },
     validators: {
       onChange: z
@@ -33,7 +35,6 @@ export const NewVersionModal: FC<NewVersionModalProps> = ({ open, setOpen }) => 
           name: z.string().min(1, "Version name is required"),
           startDate: z.date(),
           endDate: z.date(),
-          createFrom: z.enum(["empty", "lastLayout", "lastData"]),
         })
         .refine(
           (data) => {
@@ -62,7 +63,7 @@ export const NewVersionModal: FC<NewVersionModalProps> = ({ open, setOpen }) => 
           name: data.value.name,
           startDate: data.value.startDate,
           endDate: data.value.endDate,
-          createFrom: data.value.createFrom as CreateNewVersionCommandCreateFrom,
+          createFrom: "empty",
         });
         return {
           ...prev,
@@ -77,12 +78,12 @@ export const NewVersionModal: FC<NewVersionModalProps> = ({ open, setOpen }) => 
   });
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Create new Version</DialogTitle>
-        </DialogHeader>
-        <DialogDescription className="hidden">Dialog for creating new version of the map</DialogDescription>
+    <AlertDialog open={open} onOpenChange={setOpen}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Create first Version of your map</AlertDialogTitle>
+        </AlertDialogHeader>
+        <AlertDialogDescription className="hidden">Dialog for creating first version of the map</AlertDialogDescription>
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -95,23 +96,12 @@ export const NewVersionModal: FC<NewVersionModalProps> = ({ open, setOpen }) => 
           </form.AppField>
           <form.AppField name="startDate">{(field) => <field.DateField label="Start date:" />}</form.AppField>
           <form.AppField name="endDate">{(field) => <field.DateField label="End date:" />}</form.AppField>
-          <form.AppField name="createFrom">
-            {(field) => (
-              <field.RadioGroupField
-                label="Create:"
-                items={[
-                  { label: "with last version layout", value: "lastLayout" },
-                  { label: "with last version data and layout", value: "lastData" },
-                  { label: "empty", value: "empty" },
-                ]}
-              />
-            )}
-          </form.AppField>
+
           <Button type="submit" className="w-full">
             Create
           </Button>
         </form>
-      </DialogContent>
-    </Dialog>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 };

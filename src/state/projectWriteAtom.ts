@@ -56,3 +56,8 @@ export const canRedoAtom = atom((get) => {
   const { future } = get(projectAtom);
   return future.length > 0;
 });
+
+export const currentProjectVersionAtom = atom((get) => {
+  const { current } = get(projectAtom);
+  return current.project.versions.find((version) => version.id === current.actualShowedVersion);
+});
