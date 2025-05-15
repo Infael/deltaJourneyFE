@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { projectWriteAtom } from "@/state/projectWriteAtom";
 import { viewAtom } from "@/state/viewAtom";
 import { useAtomValue, useSetAtom } from "jotai";
-import { FC, useRef } from "react";
+import { FC, useEffect, useRef } from "react";
 
 interface MapCellProps {
   id?: string;
@@ -30,53 +30,70 @@ export const MapCell: FC<MapCellProps> = ({
   const ref = useRef<HTMLDivElement>(null);
   const updateProject = useSetAtom(projectWriteAtom);
   const { presentationMode } = useAtomValue(viewAtom);
+  const resizing = useRef(false);
+
+  const handlePointerDown = () => {
+    if (resizeVertical || resizeHorizontal) {
+      resizing.current = true;
+      document.addEventListener("pointerup", handlePointerUp);
+    }
+  };
 
   const handlePointerUp = () => {
-    if (ref.current && id && (resizeVertical || resizeHorizontal)) {
+    if (!resizing.current) return;
+
+    resizing.current = false;
+    document.removeEventListener("pointerup", handlePointerUp);
+
+    if (ref.current && id) {
       const rect = ref.current.getBoundingClientRect();
 
       if (resizeVertical) {
         const newWidth = Math.round(rect.width);
-        if (newWidth === width) {
-          return;
-        }
-        updateProject((prev) => {
-          const newProject = resizeTouchpointCommand(prev.project, {
-            versionId: prev.actualShowedVersion,
-            touchpointId: id,
-            newWidth: newWidth,
+        if (newWidth !== width) {
+          updateProject((prev) => {
+            const newProject = resizeTouchpointCommand(prev.project, {
+              versionId: prev.actualShowedVersion,
+              touchpointId: id,
+              newWidth: newWidth,
+            });
+            return {
+              ...prev,
+              project: newProject,
+            };
           });
-          return {
-            ...prev,
-            project: newProject,
-          };
-        });
+        }
       }
 
       if (resizeHorizontal) {
         const newHeight = Math.round(rect.height);
-        if (newHeight === height) {
-          return;
-        }
-        updateProject((prev) => {
-          const newProject = resizeMetricCommand(prev.project, {
-            versionId: prev.actualShowedVersion,
-            metricId: id,
-            newHeight: newHeight,
+        if (newHeight !== height) {
+          updateProject((prev) => {
+            const newProject = resizeMetricCommand(prev.project, {
+              versionId: prev.actualShowedVersion,
+              metricId: id,
+              newHeight: newHeight,
+            });
+            return {
+              ...prev,
+              project: newProject,
+            };
           });
-          return {
-            ...prev,
-            project: newProject,
-          };
-        });
+        }
       }
     }
   };
 
+  useEffect(() => {
+    return () => {
+      document.removeEventListener("pointerup", handlePointerUp);
+    };
+  }, []);
+
   return (
     <div
       ref={ref}
-      onPointerUp={handlePointerUp}
+      onPointerDown={handlePointerDown}
       className={cn(
         !presentationMode && resizeVertical && "resize-x",
         !presentationMode && resizeHorizontal && "resize-y",
