@@ -5,6 +5,7 @@ import { useAtomValue } from "jotai";
 import { FC } from "react";
 import { MetricDataWithTouchpoint } from "../../metric";
 import { EmptyNumericMetric } from "./emptyNumericMetric";
+import { NumericMetricFieldReload } from "./numericMetricFieldReload";
 import { NumericMetricFormDialog } from "./numericMetricFormDialog";
 
 interface NumericMetricFieldProps {
@@ -80,6 +81,7 @@ export const NumericMetricField: FC<NumericMetricFieldProps> = ({ metricData, he
     <NumericMetricFormDialog metricId={metricData.metricId} touchpointId={metricData.touchpointId} defaultValue={data}>
       {renderValueParagraph()}
       {data.numericTypeKey === NumericMetricKey.MANUAL && renderManualGraph()}
+      {data.numericTypeKey === NumericMetricKey.GA && <NumericMetricFieldReload metricData={metricData} />}
     </NumericMetricFormDialog>
   );
 };

@@ -6,7 +6,7 @@ interface CommandData {
   endDate: Date;
 }
 
-export const renameVersionCommand = (project: ProjectState, data: CommandData): ProjectState => {
+export const updateVersionCommand = (project: ProjectState, data: CommandData): ProjectState => {
   const newProject = { ...project };
 
   const versionToRename = newProject.project.versions.find((version) => version.id === newProject.actualShowedVersion);

@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useAppForm } from "@/hooks/useForm";
-import { renameVersionCommand } from "@/lib/project/commands/versionCommands/renameVersionCommand";
+import { updateVersionCommand } from "@/lib/project/commands/versionCommands/updateVersionCommand";
 import { currentProjectVersionAtom, projectWriteAtom } from "@/state/projectWriteAtom";
 import { useAtom, useAtomValue } from "jotai";
 import { FC } from "react";
@@ -50,7 +50,7 @@ export const EditVersionModal: FC<EditVersionModalProps> = ({ open, setOpen }) =
     },
     onSubmit: (values) => {
       updateProject((prev) =>
-        renameVersionCommand(prev, {
+        updateVersionCommand(prev, {
           name: values.value.versionName,
           startDate: values.value.startDate,
           endDate: values.value.endDate,
@@ -61,7 +61,13 @@ export const EditVersionModal: FC<EditVersionModalProps> = ({ open, setOpen }) =
   });
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open}
+      onOpenChange={(open) => {
+        form.reset();
+        setOpen(open);
+      }}
+    >
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit Version</DialogTitle>
