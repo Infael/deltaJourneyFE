@@ -13,54 +13,46 @@ export const ProjectPage = () => {
   const { state } = useLocation();
   const [projectData, setProjectData] = useAtom(projectAtom);
   const [versionModalOpen, setVersionModalOpen] = useState(false);
+  const [noVersions, setNoVersions] = useState(false);
 
   const { mutateAsync: getDriveFile, isPending } = useDriveFilesGet();
 
   const getFile = (projectId: string) => {
-    getDriveFile({ fileId: projectId, params: { alt: "media" } })
-      .then((data) => {
-        const project = data as Project;
+    getDriveFile({ fileId: projectId, params: { alt: "media" } }).then((data) => {
+      const project = data as Project;
+      setProjectData((prev) => ({
+        ...prev,
+        current: {
+          ...prev.current,
+          project: project,
+          actualShowedVersion: project.versions[0].id ?? "",
+          projectStorage: "drive",
+        },
+      }));
+
+      if (project.versions.length === 0) {
+        setNoVersions(true);
+      }
+    });
+  };
+
+  const getFileMetadata = (projectId: string) => {
+    getDriveFile({ fileId: projectId, params: { fields: "id, name, createdTime, modifiedTime, owners" } }).then(
+      (data) => {
         setProjectData((prev) => ({
           ...prev,
           current: {
             ...prev.current,
-            project: project,
-            actualShowedVersion:
-              project.versions.toSorted(
-                (a, b) => new Date(a.createdTime).getTime() - new Date(b.createdTime).getTime(),
-              )[0].id ?? "",
+            projectMetadata: {
+              id: data.id!,
+              name: data.name!,
+              createdTime: data.createdTime!,
+              modifiedTime: data.modifiedTime!,
+              owners: data.owners!,
+            },
             projectStorage: "drive",
           },
         }));
-      })
-      .catch((error) => {
-        console.error("Error fetching file:", error);
-      });
-  };
-
-  const getFileMetadata = (projectId: string) => {
-    getDriveFile(
-      { fileId: projectId, params: { fields: "id, name, createdTime, modifiedTime, owners" } },
-      {
-        onSuccess: (data) => {
-          setProjectData((prev) => ({
-            ...prev,
-            current: {
-              ...prev.current,
-              projectMetadata: {
-                id: data.id!,
-                name: data.name!,
-                createdTime: data.createdTime!,
-                modifiedTime: data.modifiedTime!,
-                owners: data.owners!,
-              },
-              projectStorage: "drive",
-            },
-          }));
-        },
-        onError: (error) => {
-          console.error("Error fetching file metadata:", error);
-        },
       },
     );
   };
@@ -73,7 +65,7 @@ export const ProjectPage = () => {
   }, [getDriveFile, setProjectData]);
 
   useEffect(() => {
-    if (projectData.current.actualShowedVersion === "" && projectData.current.project.versions.length === 0) {
+    if (noVersions) {
       setVersionModalOpen(true);
     }
   }, [projectData]);

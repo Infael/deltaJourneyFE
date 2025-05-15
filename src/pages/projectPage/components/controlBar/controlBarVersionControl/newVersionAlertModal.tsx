@@ -38,7 +38,6 @@ export const NewVersionAlertModal: FC<NewVersionAlertModalProps> = ({ open, setO
         })
         .refine(
           (data) => {
-            console.log("date refine", data.startDate < data.endDate);
             return data.startDate < data.endDate;
           },
           {
@@ -48,7 +47,6 @@ export const NewVersionAlertModal: FC<NewVersionAlertModalProps> = ({ open, setO
         )
         .refine(
           (data) => {
-            console.log("date refine", data.startDate < data.endDate);
             return data.startDate < data.endDate;
           },
           {

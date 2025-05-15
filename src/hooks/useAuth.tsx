@@ -20,7 +20,6 @@ export const useAuth = () => {
     ].join(" "),
     onSuccess: (data) => {
       if (data.access_token) {
-        console.log("Login Successful:", data);
         sessionStorage.setItem("access_token", data.access_token);
         sessionStorage.setItem("expiration", String(Date.now() + data.expires_in * 1000));
         setAuthAtom({ authenticated: true });

@@ -31,7 +31,6 @@ export const EditVersionModal: FC<EditVersionModalProps> = ({ open, setOpen }) =
         })
         .refine(
           (data) => {
-            console.log("date refine", data.startDate < data.endDate);
             return data.startDate < data.endDate;
           },
           {
@@ -41,7 +40,6 @@ export const EditVersionModal: FC<EditVersionModalProps> = ({ open, setOpen }) =
         )
         .refine(
           (data) => {
-            console.log("date refine", data.startDate < data.endDate);
             return data.startDate < data.endDate;
           },
           {

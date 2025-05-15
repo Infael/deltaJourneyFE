@@ -15,8 +15,6 @@ interface DateFieldProps {
 export const DateField: FC<DateFieldProps> = ({ label }) => {
   const field = useFieldContext<Date>();
 
-  console.log(field.state.meta.errors);
-
   return (
     <div className="flex flex-1 flex-col gap-1">
       <div className="flex items-center gap-2">

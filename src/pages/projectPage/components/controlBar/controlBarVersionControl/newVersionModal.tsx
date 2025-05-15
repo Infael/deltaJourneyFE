@@ -8,7 +8,7 @@ import {
 import { projectAtom } from "@/state/projectAtom";
 import { projectWriteAtom } from "@/state/projectWriteAtom";
 import { useAtom, useAtomValue } from "jotai";
-import { FC } from "react";
+import { FC, useMemo } from "react";
 import { z } from "zod";
 
 interface NewVersionModalProps {
@@ -20,11 +20,22 @@ export const NewVersionModal: FC<NewVersionModalProps> = ({ open, setOpen }) => 
   const project = useAtomValue(projectAtom);
   const [, updateProject] = useAtom(projectWriteAtom);
 
+  const lastVersionEndDatePlusOne: Date | undefined = useMemo(() => {
+    const lastVersion = project.current.project.versions[0]; // versions are pushed to the beginning of the array
+    if (lastVersion) {
+      const lastVersionEndDate = new Date(lastVersion.endDate);
+      lastVersionEndDate.setDate(lastVersionEndDate.getDate() + 1);
+      return lastVersionEndDate;
+    }
+  }, [project]);
+
   const form = useAppForm({
     defaultValues: {
       name: `Version ${project.current.project.versions.length + 1} - ${new Date().toLocaleDateString()}`,
-      startDate: new Date(new Date().setMonth(new Date().getMonth() - 1)),
-      endDate: new Date(),
+      startDate: lastVersionEndDatePlusOne ?? new Date(new Date().setMonth(new Date().getMonth() + 1)),
+      endDate: lastVersionEndDatePlusOne
+        ? new Date(new Date(lastVersionEndDatePlusOne).setMonth(lastVersionEndDatePlusOne.getMonth() + 1))
+        : new Date(),
       createFrom: "lastLayout",
     },
     validators: {
@@ -37,7 +48,6 @@ export const NewVersionModal: FC<NewVersionModalProps> = ({ open, setOpen }) => 
         })
         .refine(
           (data) => {
-            console.log("date refine", data.startDate < data.endDate);
             return data.startDate < data.endDate;
           },
           {
@@ -47,7 +57,6 @@ export const NewVersionModal: FC<NewVersionModalProps> = ({ open, setOpen }) => 
         )
         .refine(
           (data) => {
-            console.log("date refine", data.startDate < data.endDate);
             return data.startDate < data.endDate;
           },
           {
@@ -77,7 +86,13 @@ export const NewVersionModal: FC<NewVersionModalProps> = ({ open, setOpen }) => 
   });
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open}
+      onOpenChange={(open) => {
+        form.reset();
+        setOpen(open);
+      }}
+    >
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create new Version</DialogTitle>
