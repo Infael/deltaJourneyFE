@@ -24,7 +24,7 @@ interface TouchpointProps {
 }
 
 export const Touchpoint: FC<TouchpointProps> = ({ id, name, width, touchpoints }) => {
-  const { presentationMode } = useAtomValue(viewAtom);
+  const { presentationMode, editable } = useAtomValue(viewAtom);
   const [, updateProject] = useAtom(projectWriteAtom);
 
   const [renameTouchpointModalOpen, setRenameTouchpointModalOpen] = useState(false);
@@ -34,7 +34,7 @@ export const Touchpoint: FC<TouchpointProps> = ({ id, name, width, touchpoints }
       <div className="flex h-full w-full flex-col items-center justify-center gap-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild className="absolute top-1 right-1">
-            {!presentationMode && (
+            {!presentationMode && editable && (
               <Button variant="ghost" className="h-6 px-2">
                 •••
               </Button>

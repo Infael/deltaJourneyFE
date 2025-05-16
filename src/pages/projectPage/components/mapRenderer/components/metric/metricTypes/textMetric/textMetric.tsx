@@ -5,6 +5,7 @@ import { useAtomValue } from "jotai";
 import { FC } from "react";
 import { MapCell } from "../../../mapCell";
 import { MetricDataWithTouchpoint } from "../../metric";
+import { TextMetricContent } from "./textMetricContent";
 import { TextMetricEditor } from "./textMetricEditor";
 
 interface TextMetricProps {
@@ -12,14 +13,14 @@ interface TextMetricProps {
 }
 
 export const TextMetric: FC<TextMetricProps> = ({ metricData: data }) => {
-  const { presentationMode } = useAtomValue(viewAtom);
+  const { presentationMode, editable } = useAtomValue(viewAtom);
 
   return data.map((metric, index) => (
     <MapCell key={`${metric.metricData?.id}_${index}`} className="overflow-visible">
-      {presentationMode && metric.metricData && (
-        <p className="text-center text-sm" dangerouslySetInnerHTML={{ __html: metric.metricData.value }}></p>
+      {(presentationMode || !editable) && metric.metricData && (
+        <TextMetricContent content={metric.metricData.value} comparedContent={metric.comparedMetricData?.value} />
       )}
-      <div className={presentationMode ? "hidden" : ""}>
+      <div className={presentationMode || !editable ? "hidden" : ""}>
         <TextMetricEditor data={metric} />
       </div>
     </MapCell>

@@ -10,9 +10,11 @@ import { MetricDataWithTouchpoint } from "../../metric";
 import { Circle } from "./circle";
 import { Line } from "./line";
 
+import { compareStateAtom } from "@/state/compareStateAtom";
 import happy from "./assets/happy.svg";
 import neutral from "./assets/neutral.svg";
 import sad from "./assets/sad.svg";
+import { Path } from "./path";
 
 interface ExperienceMetricProps {
   metricInfo: MetricInfoExperience;
@@ -25,7 +27,14 @@ export const ExperienceMetric: FC<ExperienceMetricProps> = ({ metricInfo, metric
   const containerRef = useRef<HTMLDivElement>(null);
   const [cellWidths, setCellWidths] = useState<number[]>([]);
   const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
-  const { presentationMode } = useAtomValue(viewAtom);
+
+  const { presentationMode, editable } = useAtomValue(viewAtom);
+  const { activated, currentVersionColor, selectedVersionColor } = useAtomValue(compareStateAtom);
+
+  const pathColor = useMemo(
+    () => (activated ? currentVersionColor : metricInfo.path.color),
+    [activated, currentVersionColor, metricInfo],
+  );
 
   const onPointChange = (index: number, value: number) => {
     updateProject((prev) => {
@@ -50,7 +59,7 @@ export const ExperienceMetric: FC<ExperienceMetricProps> = ({ metricInfo, metric
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      if (draggingIndex === null || !containerRef.current || presentationMode) return;
+      if (draggingIndex === null || !containerRef.current || presentationMode || !editable) return;
 
       const bounds = containerRef.current.getBoundingClientRect();
       const relativeY = e.clientY - bounds.top;
@@ -78,54 +87,10 @@ export const ExperienceMetric: FC<ExperienceMetricProps> = ({ metricInfo, metric
     };
   }, [draggingIndex, metricInfo.height]);
 
-  const pathData = useMemo(() => {
-    if (cellWidths.length === 0) return "";
+  const metricValues = useMemo(() => metricData.map((d) => d.metricData?.value ?? 50), [metricData]);
+  const comparedMetricValues = useMemo(() => metricData.map((d) => d.comparedMetricData?.value ?? 50), [metricData]);
 
-    const cumulativeX = cellWidths.reduce<number[]>((acc, width, idx) => {
-      const last = acc[idx - 1] ?? 0;
-      acc.push(last + width);
-      return acc;
-    }, []);
-
-    const chartHeight = metricInfo.height;
-
-    const points = metricData.map((d, idx) => {
-      const value = d.metricData && typeof d.metricData.value === "number" ? d.metricData.value : 50;
-      const x = (cumulativeX[idx - 1] ?? 0) + (cellWidths[idx] ?? 0) / 2;
-      const y = chartHeight - (value / 100) * chartHeight;
-      return { x, y };
-    });
-
-    if (points.length === 0) return "";
-
-    const totalWidth = cumulativeX[cumulativeX.length - 1] ?? 0;
-
-    const fullPoints = [{ x: 0, y: points[0].y }, ...points, { x: totalWidth, y: points[points.length - 1].y }];
-
-    let d = `M ${fullPoints[0].x},${chartHeight} `;
-    d += `L ${fullPoints[0].x},${fullPoints[0].y} `;
-
-    const sharpnessFactor = metricInfo.path.curveSmoothness;
-
-    for (let i = 0; i < fullPoints.length - 1; i++) {
-      const p0 = fullPoints[i];
-      const p1 = fullPoints[i + 1];
-
-      const controlPointDistance = (p1.x - p0.x) * sharpnessFactor;
-
-      const controlPoint1 = { x: p0.x + controlPointDistance, y: p0.y };
-      const controlPoint2 = { x: p1.x - controlPointDistance, y: p1.y };
-
-      d += `C ${controlPoint1.x},${controlPoint1.y} ${controlPoint2.x},${controlPoint2.y} ${p1.x},${p1.y} `;
-    }
-
-    d += `L ${fullPoints.at(-1)!.x},${chartHeight} `;
-    d += `Z`;
-
-    return d;
-  }, [metricData, metricInfo.height, cellWidths]);
-
-  const hoverPoints = useMemo(() => {
+  const getHoverPoints = (values: number[], cellWidths: number[], height: number) => {
     if (cellWidths.length === 0) return [];
 
     const cumulativeX = cellWidths.reduce<number[]>((acc, width, idx) => {
@@ -134,27 +99,45 @@ export const ExperienceMetric: FC<ExperienceMetricProps> = ({ metricInfo, metric
       return acc;
     }, []);
 
-    const chartHeight = metricInfo.height;
+    const chartHeight = height;
 
-    return metricData.map((d, idx) => {
-      const value = d.metricData && typeof d.metricData.value === "number" ? d.metricData.value : 50;
+    return values.map((value, idx) => {
       const x = (cumulativeX[idx - 1] ?? 0) + (cellWidths[idx] ?? 0) / 2;
       const y = chartHeight - (value / 100) * chartHeight;
       return { x, y };
     });
-  }, [metricData, metricInfo.height, cellWidths]);
+  };
+
+  const hoverPoints = useMemo(
+    () => getHoverPoints(metricValues, cellWidths, metricInfo.height),
+    [metricValues, cellWidths, metricInfo.height],
+  );
+
+  const comparedHoverPoints = useMemo(
+    () => getHoverPoints(comparedMetricValues, cellWidths, metricInfo.height),
+    [comparedMetricValues, cellWidths, metricInfo.height],
+  );
 
   return (
     <MapCell gridSize={metricData.length} className="p-0">
       <div ref={containerRef} style={{ position: "relative", width: "100%", height: `${metricInfo.height}px` }}>
         <svg width="100%" height={metricInfo.height} style={{ position: "absolute", top: 0, left: 0 }}>
-          <defs>
-            <linearGradient id="experienceGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor={metricInfo.path.color} stopOpacity="0.4" />
-              <stop offset="100%" stopColor={metricInfo.path.color} stopOpacity="0" />
-            </linearGradient>
-          </defs>
-          <path d={pathData} fill="url(#experienceGradient)" stroke={metricInfo.path.color} strokeWidth="2" />
+          <Path
+            cellWidths={cellWidths}
+            height={metricInfo.height}
+            pathColor={pathColor}
+            pathSmoothness={metricInfo.path.curveSmoothness}
+            values={metricData.map((d) => d.metricData?.value ?? 50)}
+          />
+          {activated && (
+            <Path
+              cellWidths={cellWidths}
+              height={metricInfo.height}
+              pathColor={selectedVersionColor}
+              pathSmoothness={metricInfo.path.curveSmoothness}
+              values={metricData.map((d) => d.comparedMetricData?.value ?? 50)}
+            />
+          )}
           {!metricInfo.lines.hidden && (
             <>
               <Line height={metricInfo.height * metricInfo.lines.firstValue} />
@@ -166,10 +149,11 @@ export const ExperienceMetric: FC<ExperienceMetricProps> = ({ metricInfo, metric
               <Circle
                 cx={point.x}
                 cy={point.y}
-                color={metricInfo.path.color}
+                color={pathColor}
                 onMouseDown={() => setDraggingIndex(idx)}
+                disabled={presentationMode || !editable}
               />
-              {!metricInfo.emojis.hidden && (
+              {!metricInfo.emojis.hidden && !activated && (
                 <image
                   href={
                     point.y < metricInfo.height * metricInfo.lines.firstValue
@@ -198,6 +182,16 @@ export const ExperienceMetric: FC<ExperienceMetricProps> = ({ metricInfo, metric
               )}
             </Fragment>
           ))}
+          {activated &&
+            comparedHoverPoints.map((point, idx) => (
+              <Circle
+                key={idx}
+                cx={point.x}
+                cy={point.y}
+                color={selectedVersionColor}
+                disabled={presentationMode || !editable}
+              />
+            ))}
         </svg>
       </div>
     </MapCell>

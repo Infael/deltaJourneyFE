@@ -14,11 +14,11 @@ interface NumericMetricFieldProps {
 }
 
 export const NumericMetricField: FC<NumericMetricFieldProps> = ({ metricData, height }) => {
-  const { presentationMode } = useAtomValue(viewAtom);
+  const { presentationMode, editable } = useAtomValue(viewAtom);
   const data = metricData.metricData;
 
   if (!data) {
-    return presentationMode ? null : (
+    return presentationMode || !editable ? null : (
       <EmptyNumericMetric metricId={metricData.metricId} touchpointId={metricData.touchpointId} />
     );
   }

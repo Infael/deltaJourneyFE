@@ -17,7 +17,7 @@ interface NumericMetricFieldReloadProps {
 export const NumericMetricFieldReload: FC<NumericMetricFieldReloadProps> = ({ metricData }) => {
   const projectVersion = useAtomValue(currentProjectVersionAtom);
   const [, updateProject] = useAtom(projectWriteAtom);
-  const { presentationMode } = useAtomValue(viewAtom);
+  const { presentationMode, editable } = useAtomValue(viewAtom);
 
   const { mutateAsync: runReport } = useAnalyticsdataPropertiesRunReport();
 
@@ -80,7 +80,7 @@ export const NumericMetricFieldReload: FC<NumericMetricFieldReloadProps> = ({ me
     }
   };
 
-  if (presentationMode) return null;
+  if (presentationMode || !editable) return null;
 
   return (
     <div className="absolute top-2 right-2">

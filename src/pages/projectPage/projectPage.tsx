@@ -8,6 +8,7 @@ import { useLocation } from "react-router-dom";
 import { ControlBar } from "./components/controlBar/controlBar";
 import { NewVersionAlertModal } from "./components/controlBar/controlBarVersionControl/newVersionAlertModal";
 import { MapRenderer } from "./components/mapRenderer/mapRenderer";
+import { VersionBar } from "./components/versionBar/versionBar";
 
 export const ProjectPage = () => {
   const { state } = useLocation();
@@ -81,6 +82,7 @@ export const ProjectPage = () => {
   return (
     <div className="flex flex-col">
       <ControlBar />
+      <VersionBar />
       <MapRenderer />
       <NewVersionAlertModal open={versionModalOpen} setOpen={setVersionModalOpen} />
     </div>

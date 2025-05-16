@@ -11,10 +11,11 @@ interface NumericMetricFieldProps {
 }
 
 export const EmptyNumericMetric: FC<NumericMetricFieldProps> = ({ metricId, touchpointId }) => {
-  const { presentationMode } = useAtomValue(viewAtom);
+  const { presentationMode, editable } = useAtomValue(viewAtom);
 
   return (
-    !presentationMode && (
+    !presentationMode &&
+    editable && (
       <NumericMetricFormDialog metricId={metricId} touchpointId={touchpointId}>
         <>
           <Paragraph variant="faded">No data yet...</Paragraph>

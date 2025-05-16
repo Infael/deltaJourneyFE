@@ -97,7 +97,7 @@ export const MapCell: FC<MapCellProps> = ({
       className={cn(
         !presentationMode && resizeVertical && "resize-x",
         !presentationMode && resizeHorizontal && "resize-y",
-        "relative flex min-h-24 min-w-24 flex-col items-center justify-center gap-4 overflow-hidden p-2 outline",
+        "relative flex min-h-24 min-w-24 flex-col items-center justify-center overflow-hidden p-2 outline",
         className,
       )}
       style={{ gridColumn: `span ${gridSize ?? 1}`, width, height }}

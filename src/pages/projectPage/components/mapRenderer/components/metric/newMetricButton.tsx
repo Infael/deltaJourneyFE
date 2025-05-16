@@ -26,7 +26,7 @@ interface NewMetricButtonProps {
 }
 
 export const NewMetricButton: FC<NewMetricButtonProps> = ({ gridSize }) => {
-  const { presentationMode } = useAtomValue(viewAtom);
+  const { presentationMode, editable } = useAtomValue(viewAtom);
   const updateProject = useSetAtom(projectWriteAtom);
 
   const form = useAppForm({
@@ -69,7 +69,7 @@ export const NewMetricButton: FC<NewMetricButtonProps> = ({ gridSize }) => {
     }
   };
 
-  if (presentationMode) {
+  if (presentationMode || !editable) {
     return null;
   }
 

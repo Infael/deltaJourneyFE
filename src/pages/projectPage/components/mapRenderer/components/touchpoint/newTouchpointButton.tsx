@@ -20,7 +20,7 @@ import { z } from "zod";
 import plusIcon from "../../assets/plusIcon.svg";
 
 export const NewTouchpointButton = () => {
-  const { presentationMode } = useAtomValue(viewAtom);
+  const { presentationMode, editable } = useAtomValue(viewAtom);
   const updateProject = useSetAtom(projectWriteAtom);
 
   const form = useAppForm({
@@ -47,7 +47,7 @@ export const NewTouchpointButton = () => {
     },
   });
 
-  if (presentationMode) {
+  if (presentationMode || !editable) {
     return null;
   }
 

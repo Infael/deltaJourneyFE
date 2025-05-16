@@ -36,7 +36,7 @@ export const NumericMetricFormDialog: FC<NumericMetricFormDialogProps> = ({
   metricId,
   touchpointId,
 }) => {
-  const { presentationMode } = useAtomValue(viewAtom);
+  const { presentationMode, editable } = useAtomValue(viewAtom);
   const projectVersion = useAtomValue(currentProjectVersionAtom);
   const [, updateProject] = useAtom(projectWriteAtom);
 
@@ -317,8 +317,8 @@ export const NumericMetricFormDialog: FC<NumericMetricFormDialogProps> = ({
   return (
     <Dialog>
       <DialogTrigger
-        className="flex h-full w-full cursor-pointer flex-col items-center justify-center"
-        disabled={presentationMode}
+        className="flex h-full w-full cursor-pointer flex-col items-center justify-center disabled:cursor-default"
+        disabled={presentationMode || !editable}
       >
         {children}
       </DialogTrigger>

@@ -15,6 +15,7 @@ import {
   TextMetricData,
 } from "@/lib/project/models/metrics";
 import { MetricInfo, MetricInfoExperience, Touchpoint } from "@/lib/project/models/project";
+import { compareStateAtom } from "@/state/compareStateAtom";
 import { projectWriteAtom } from "@/state/projectWriteAtom";
 import { viewAtom } from "@/state/viewAtom";
 import { useAtom, useAtomValue } from "jotai";
@@ -36,10 +37,11 @@ export type MetricDataWithTouchpoint<T extends MetricData> = {
   touchpointId: string;
   touchpointWidth: number;
   metricId: string;
-} & ({ metricData: T } | { metricData: undefined });
+} & { metricData?: T; comparedMetricData?: T };
 
 export const Metric: FC<MetricProps> = ({ metricInfo, touchpoints, metrics }) => {
-  const { presentationMode } = useAtomValue(viewAtom);
+  const { presentationMode, editable } = useAtomValue(viewAtom);
+  const { selectedVersion } = useAtomValue(compareStateAtom);
   const [, updateProject] = useAtom(projectWriteAtom);
 
   const [renameTouchpointModalOpen, setRenameTouchpointModalOpen] = useState(false);
@@ -50,8 +52,11 @@ export const Metric: FC<MetricProps> = ({ metricInfo, touchpoints, metrics }) =>
       touchpointWidth: touchpoint.width,
       metricId: metricInfo.id,
       metricData: touchpoint.metricsData.find((metric) => metric.id === metricInfo.id),
+      comparedMetricData: selectedVersion?.touchpoints
+        .find((t) => t.id === touchpoint.id)
+        ?.metricsData.find((metric) => metric.id === metricInfo.id),
     }));
-  }, [metricInfo, touchpoints]);
+  }, [metricInfo, touchpoints, selectedVersion]);
 
   const getMetricContentComponent = () => {
     switch (metricInfo.key) {
@@ -82,7 +87,7 @@ export const Metric: FC<MetricProps> = ({ metricInfo, touchpoints, metrics }) =>
         <div className="flex h-full w-full flex-col items-center justify-center gap-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild className="absolute top-1 right-1">
-              {!presentationMode && (
+              {!presentationMode && editable && (
                 <Button variant="ghost" className="h-6 px-2">
                   •••
                 </Button>

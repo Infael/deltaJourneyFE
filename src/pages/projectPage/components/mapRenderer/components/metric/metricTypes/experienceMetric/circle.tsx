@@ -3,11 +3,12 @@ import { FC } from "react";
 interface CircleProps {
   cx: number;
   cy: number;
-  color?: string;
-  onMouseDown: () => void;
+  color: string;
+  onMouseDown?: () => void;
+  disabled?: boolean;
 }
 
-export const Circle: FC<CircleProps> = ({ cx, cy, color = "blue", onMouseDown }) => {
+export const Circle: FC<CircleProps> = ({ cx, cy, color, onMouseDown, disabled }) => {
   return (
     <circle
       cx={cx}
@@ -16,14 +17,8 @@ export const Circle: FC<CircleProps> = ({ cx, cy, color = "blue", onMouseDown })
       fill="white"
       stroke={color}
       strokeWidth="2"
-      style={{ transition: "transform 0.2s", transformOrigin: "center center", cursor: "grab" }}
-      onMouseEnter={(e) => {
-        (e.target as SVGCircleElement).setAttribute("r", "7");
-      }}
-      onMouseLeave={(e) => {
-        (e.target as SVGCircleElement).setAttribute("r", "4");
-      }}
-      onMouseDown={onMouseDown}
+      style={{ transition: "transform 0.2s", transformOrigin: "center center", cursor: disabled ? "default" : "grab" }}
+      onMouseDown={disabled ? undefined : onMouseDown}
     />
   );
 };
