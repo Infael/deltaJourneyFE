@@ -34,7 +34,7 @@ export const VersionBar = () => {
           <TooltipTrigger asChild>
             <div
               className="z-10 max-w-max rounded-bl-md border-2 border-t-0 border-r-0 bg-white px-2"
-              style={{ backgroundColor: currentVersionColor }}
+              style={{ backgroundColor: activated ? currentVersionColor : "white" }}
             >
               {versionData.name} - from {new Date(versionData.startDate).toLocaleDateString()} to{" "}
               {new Date(versionData.endDate).toLocaleDateString()}

@@ -12,9 +12,9 @@ interface CompareState {
 
 export const initialCompareState: CompareState = {
   activated: false,
-  currentVersionColor: "#90BE6D99",
+  currentVersionColor: "#8ae1f6",
   selectedVersion: null,
-  selectedVersionColor: "#F9C74F99",
+  selectedVersionColor: "#fcde98",
 };
 
 export const compareStateAtom = atom<CompareState>(initialCompareState);

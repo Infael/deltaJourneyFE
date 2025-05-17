@@ -26,7 +26,7 @@ export const ProjectPage = () => {
         current: {
           ...prev.current,
           project: project,
-          actualShowedVersion: project.versions[0].id ?? "",
+          actualShowedVersion: project.versions[0]?.id ?? "",
           projectStorage: "drive",
         },
       }));
@@ -68,8 +68,9 @@ export const ProjectPage = () => {
   useEffect(() => {
     if (noVersions) {
       setVersionModalOpen(true);
+      setNoVersions(false);
     }
-  }, [projectData]);
+  }, [projectData, noVersions]);
 
   if (isPending) {
     return (

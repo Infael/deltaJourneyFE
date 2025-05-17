@@ -63,7 +63,7 @@ export const RenameTouchpointModal: FC<RenameTouchpointModalProps> = ({
           }}
           className="flex flex-col gap-4"
         >
-          <form.AppField name="versionName">
+          <form.AppField name="touchpointName">
             {(field) => <field.TextField label="Enter the new name for touchpoint:" />}
           </form.AppField>
 

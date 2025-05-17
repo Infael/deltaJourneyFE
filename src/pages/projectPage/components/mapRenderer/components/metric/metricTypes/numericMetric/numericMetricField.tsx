@@ -1,5 +1,6 @@
 import { Paragraph } from "@/components/ui/paragraph";
 import { NumericMetricData, NumericMetricKey } from "@/lib/project/models/metrics";
+import { compareStateAtom } from "@/state/compareStateAtom";
 import { viewAtom } from "@/state/viewAtom";
 import { useAtomValue } from "jotai";
 import { FC } from "react";
@@ -15,6 +16,7 @@ interface NumericMetricFieldProps {
 
 export const NumericMetricField: FC<NumericMetricFieldProps> = ({ metricData, height }) => {
   const { presentationMode, editable } = useAtomValue(viewAtom);
+  const { activated, currentVersionColor, selectedVersionColor } = useAtomValue(compareStateAtom);
   const data = metricData.metricData;
 
   if (!data) {
@@ -23,18 +25,20 @@ export const NumericMetricField: FC<NumericMetricFieldProps> = ({ metricData, he
     );
   }
 
-  const value = data.value ?? 0;
-
-  const renderValueParagraph = () =>
+  const renderValueParagraph = (value: number) =>
     !data.valueSettings.hidden && (
-      <Paragraph style={{ color: data.valueSettings.color }}>
+      <Paragraph
+        style={{
+          color: data.valueSettings.color,
+        }}
+      >
         {data.valueSettings.prefix}
         {value}
         {data.valueSettings.suffix}
       </Paragraph>
     );
 
-  const renderManualGraph = () => {
+  const renderManualGraph = (value: number, color: string) => {
     if (data.numericTypeKey !== NumericMetricKey.MANUAL) return null;
 
     const min = data.manualProperties?.range.min ?? 0;
@@ -54,14 +58,14 @@ export const NumericMetricField: FC<NumericMetricFieldProps> = ({ metricData, he
         >
           <defs>
             <linearGradient
-              id={`${metricData.metricId}-${metricData.touchpointId}-gradient-under-line`}
+              id={`${metricData.metricId}-${metricData.touchpointId}-${color}-gradient-under-line`}
               x1="0"
               y1="0"
               x2="0"
               y2="1"
             >
-              <stop offset="0%" stopColor={data.graphSettings.color} stopOpacity="0.25" />
-              <stop offset="100%" stopColor={data.graphSettings.color} stopOpacity="0" />
+              <stop offset="0%" stopColor={color} stopOpacity="0.25" />
+              <stop offset="100%" stopColor={color} stopOpacity="0" />
             </linearGradient>
           </defs>
           <rect
@@ -69,19 +73,43 @@ export const NumericMetricField: FC<NumericMetricFieldProps> = ({ metricData, he
             y={y}
             width="100%"
             height={height - y}
-            fill={`url(#${metricData.metricId}-${metricData.touchpointId}-gradient-under-line)`}
+            fill={`url(#${metricData.metricId}-${metricData.touchpointId}-${color}-gradient-under-line)`}
           />
-          <line x1="0" y1={y} x2="100%" y2={y} stroke={data.graphSettings.color} strokeWidth="2" />
+          <line x1="0" y1={y} x2="100%" y2={y} stroke={color} strokeWidth="2" />
         </svg>
       )
     );
   };
 
   return (
-    <NumericMetricFormDialog metricId={metricData.metricId} touchpointId={metricData.touchpointId} defaultValue={data}>
-      {renderValueParagraph()}
-      {data.numericTypeKey === NumericMetricKey.MANUAL && renderManualGraph()}
-      {data.numericTypeKey === NumericMetricKey.GA && <NumericMetricFieldReload metricData={metricData} />}
-    </NumericMetricFormDialog>
+    <div className="flex h-full w-full">
+      {activated && (
+        <div
+          className="relative flex flex-1 border-r-1 border-dashed"
+          style={{ backgroundColor: data.graphSettings.hidden ? selectedVersionColor : "transparent" }}
+        >
+          <div className="flex flex-1 items-center justify-center">
+            {renderValueParagraph(metricData.comparedMetricData?.value ?? 0)}
+            {data.numericTypeKey === NumericMetricKey.MANUAL &&
+              renderManualGraph(metricData.comparedMetricData?.value ?? 0, selectedVersionColor)}
+          </div>
+        </div>
+      )}
+      <div
+        className="relative flex flex-1"
+        style={{ backgroundColor: data.graphSettings.hidden && activated ? currentVersionColor : "transparent" }}
+      >
+        <NumericMetricFormDialog
+          metricId={metricData.metricId}
+          touchpointId={metricData.touchpointId}
+          defaultValue={data}
+        >
+          {renderValueParagraph(data.value ?? 0)}
+          {data.numericTypeKey === NumericMetricKey.MANUAL &&
+            renderManualGraph(data.value ?? 0, activated ? currentVersionColor : data.graphSettings.color)}
+          {data.numericTypeKey === NumericMetricKey.GA && <NumericMetricFieldReload metricData={metricData} />}
+        </NumericMetricFormDialog>
+      </div>
+    </div>
   );
 };

@@ -256,7 +256,7 @@ export const NumericMetricFormDialog: FC<NumericMetricFormDialogProps> = ({
                   },
                   graphSettings: {
                     color: data.value.graphSettings.color,
-                    hidden: false,
+                    hidden: true,
                   },
                   valueSettings: {
                     color: data.value.valueSettings.color,
@@ -316,10 +316,7 @@ export const NumericMetricFormDialog: FC<NumericMetricFormDialogProps> = ({
 
   return (
     <Dialog>
-      <DialogTrigger
-        className="flex h-full w-full cursor-pointer flex-col items-center justify-center disabled:cursor-default"
-        disabled={presentationMode || !editable}
-      >
+      <DialogTrigger className="flex-1 cursor-pointer disabled:cursor-default" disabled={presentationMode || !editable}>
         {children}
       </DialogTrigger>
       <DialogContent>
@@ -446,9 +443,18 @@ export const NumericMetricFormDialog: FC<NumericMetricFormDialogProps> = ({
             }}
           </form.Subscribe>
           <hr />
-          <form.AppField name="graphSettings.color">
-            {(field) => <field.TextField label="Graph color:" type="color" />}
-          </form.AppField>
+          <form.Subscribe selector={(state) => state.values}>
+            {(values) => {
+              if (values.type === NumericMetricKey.MANUAL && values.manualProperties.rangeType !== "unlimited") {
+                return (
+                  <form.AppField name="graphSettings.color">
+                    {(field) => <field.TextField label="Graph color:" type="color" />}
+                  </form.AppField>
+                );
+              }
+              return null;
+            }}
+          </form.Subscribe>
           <form.AppField name="valueSettings.color">
             {(field) => <field.TextField label="Value color:" type="color" />}
           </form.AppField>

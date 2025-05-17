@@ -6,8 +6,12 @@ import {
   MenubarShortcut,
   MenubarTrigger,
 } from "@/components/ui/menubar";
+import { copyDjProject } from "@/lib/copyDjProject";
+import { formatDjProject } from "@/lib/formatDjProject";
+import { pasteDjProject } from "@/lib/pasteDjProject";
+import { projectAtom } from "@/state/projectAtom";
 import { canRedoAtom, canUndoAtom, projectRedoAtom, projectUndoAtom } from "@/state/projectWriteAtom";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useEffect } from "react";
 
 export const EditMenu = () => {
@@ -15,6 +19,23 @@ export const EditMenu = () => {
   const canRedo = useAtomValue(canRedoAtom);
   const undo = useSetAtom(projectUndoAtom);
   const redo = useSetAtom(projectRedoAtom);
+
+  const [projectWithHistory, setCurrentProjectWithHistory] = useAtom(projectAtom);
+
+  const handlePaste = async () => {
+    const clipboardData = await pasteDjProject();
+    if (clipboardData) {
+      const project = formatDjProject(clipboardData);
+      if (!project) {
+        console.error("Invalid project data");
+        return;
+      }
+      setCurrentProjectWithHistory((prev) => ({
+        ...prev,
+        current: project,
+      }));
+    }
+  };
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -45,8 +66,8 @@ export const EditMenu = () => {
           Redo <MenubarShortcut>⇧⌘Z</MenubarShortcut>
         </MenubarItem>
         <MenubarSeparator />
-        <MenubarItem>Copy</MenubarItem>
-        <MenubarItem>Paste and Replace</MenubarItem>
+        <MenubarItem onClick={() => copyDjProject(projectWithHistory.current)}>Copy</MenubarItem>
+        <MenubarItem onClick={handlePaste}>Paste and Replace</MenubarItem>
       </MenubarContent>
     </MenubarMenu>
   );
