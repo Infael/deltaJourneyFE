@@ -81,11 +81,13 @@ export const ProjectPage = () => {
   }
 
   return (
-    <div className="flex flex-col">
+    <>
       <ControlBar />
-      <VersionBar />
-      <MapRenderer />
+      <div className="relative flex flex-1 flex-col" id="map-editor">
+        <VersionBar />
+        <MapRenderer />
+      </div>
       <NewVersionAlertModal open={versionModalOpen} setOpen={setVersionModalOpen} />
-    </div>
+    </>
   );
 };

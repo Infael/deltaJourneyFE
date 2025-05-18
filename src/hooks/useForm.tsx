@@ -1,3 +1,4 @@
+import { AreaField } from "@/components/form/areaField";
 import { CheckboxField } from "@/components/form/checkboxField";
 import { DateField } from "@/components/form/dateField";
 import { RadioGroupField } from "@/components/form/radioGroupField";
@@ -12,6 +13,6 @@ export const { useAppForm } = createFormHook({
   fieldContext,
   formContext,
 
-  fieldComponents: { TextField, RadioGroupField, SelectField, SliderField, CheckboxField, DateField },
+  fieldComponents: { TextField, RadioGroupField, SelectField, SliderField, CheckboxField, DateField, AreaField },
   formComponents: {},
 });
