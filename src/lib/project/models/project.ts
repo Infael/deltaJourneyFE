@@ -57,5 +57,6 @@ export interface Touchpoint {
   description: string;
   width: number;
 
+  notes: string;
   metricsData: MetricData[];
 }

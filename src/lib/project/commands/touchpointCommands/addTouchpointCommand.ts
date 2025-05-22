@@ -15,6 +15,7 @@ export const addTouchpointCommand = (project: Project, data: CommandData): Proje
     modifiedTime: new Date().toISOString(),
     description: "",
     metricsData: [],
+    notes: "",
     width: DEFAULT_TOUCHPOINT_WIDTH,
   };
 
