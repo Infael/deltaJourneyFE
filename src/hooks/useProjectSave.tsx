@@ -49,13 +49,8 @@ export const useProjectSave = () => {
   // handle keyboard shortcuts for saving
   useEffect(() => {
     const handleSaveShortcut = (event: KeyboardEvent) => {
-      // mac
-      if (event.metaKey && event.key === "s") {
-        event.preventDefault();
-        save();
-      }
-      // windows
-      if (event.ctrlKey && event.key === "s") {
+      // mac is metaKey; windows is ctrlKey
+      if ((event.metaKey || event.ctrlKey) && event.key === "s") {
         event.preventDefault();
         save();
       }

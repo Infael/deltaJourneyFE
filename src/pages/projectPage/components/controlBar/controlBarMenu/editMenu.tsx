@@ -39,10 +39,10 @@ export const EditMenu = () => {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.shiftKey && event.metaKey && event.key === "z") {
+      if (event.shiftKey && (event.metaKey || event.ctrlKey) && event.key === "z") {
         event.preventDefault();
         redo();
-      } else if (event.metaKey && event.key === "z") {
+      } else if ((event.metaKey || event.ctrlKey) && event.key === "z") {
         event.preventDefault();
         undo();
       }
