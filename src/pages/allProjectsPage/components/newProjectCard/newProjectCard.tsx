@@ -19,7 +19,7 @@ export const NewProjectCard = () => {
       >
         <div className="flex flex-col items-center justify-center gap-4 px-4 py-8">
           <img src={plusIcon} alt="create new project" className="size-36" />
-          <Heading level="h3">Create new Project</Heading>
+          <Heading level="h3">Create new</Heading>
         </div>
       </Card>
       <NewProjectModal

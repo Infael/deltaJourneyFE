@@ -46,9 +46,16 @@ export const useProjectSave = () => {
     }
   };
 
+  // handle keyboard shortcuts for saving
   useEffect(() => {
     const handleSaveShortcut = (event: KeyboardEvent) => {
+      // mac
       if (event.metaKey && event.key === "s") {
+        event.preventDefault();
+        save();
+      }
+      // windows
+      if (event.ctrlKey && event.key === "s") {
         event.preventDefault();
         save();
       }
@@ -58,6 +65,21 @@ export const useProjectSave = () => {
       window.removeEventListener("keydown", handleSaveShortcut);
     };
   }, [project, projectMetadata, projectStorage, saveToDrive, save]);
+
+  // handle page quit with unsaved changes
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (!savedProject) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+      return undefined;
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [savedProject]);
 
   return {
     savedProject,

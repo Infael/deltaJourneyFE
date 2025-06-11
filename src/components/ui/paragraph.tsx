@@ -6,6 +6,8 @@ const ParagraphVariants = cva("", {
     variant: {
       default: "",
       faded: "text-gray-300",
+      fadedLight: "text-gray-200",
+      fadedDark: "text-gray-400",
     },
     size: {
       default: "text-base leading-6",
@@ -17,6 +19,7 @@ const ParagraphVariants = cva("", {
     },
     weight: {
       default: "font-normal",
+      semibold: "font-semibold",
       bold: "font-bold",
       extrabold: "font-extrabold",
     },
