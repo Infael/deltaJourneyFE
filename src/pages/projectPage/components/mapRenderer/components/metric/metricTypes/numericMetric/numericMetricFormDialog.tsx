@@ -20,7 +20,7 @@ import { viewAtom } from "@/state/viewAtom";
 import { DialogClose } from "@radix-ui/react-dialog";
 
 import { useAtom, useAtomValue } from "jotai";
-import { FC, useMemo } from "react";
+import { FC, useMemo, useState } from "react";
 import { z } from "zod";
 
 interface NumericMetricFormDialogProps {
@@ -39,6 +39,8 @@ export const NumericMetricFormDialog: FC<NumericMetricFormDialogProps> = ({
   const { presentationMode, editable } = useAtomValue(viewAtom);
   const projectVersion = useAtomValue(currentProjectVersionAtom);
   const [, updateProject] = useAtom(projectWriteAtom);
+
+  const [open, setOpen] = useState(false);
 
   const { data: properties } = useAnalyticsadminAccountSummariesListSuspense();
   const { mutateAsync: runReport } = useAnalyticsdataPropertiesRunReport();
@@ -311,11 +313,12 @@ export const NumericMetricFormDialog: FC<NumericMetricFormDialogProps> = ({
           };
         });
       }
+      setOpen(false);
     },
   });
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger className="flex-1 cursor-pointer disabled:cursor-default" disabled={presentationMode || !editable}>
         {children}
       </DialogTrigger>
@@ -487,9 +490,7 @@ export const NumericMetricFormDialog: FC<NumericMetricFormDialogProps> = ({
                 </Button>
               </DialogClose>
             )}
-            <DialogClose asChild>
-              <Button type="submit">Save</Button>
-            </DialogClose>
+            <Button type="submit">Save</Button>
           </DialogFooter>
         </form>
       </DialogContent>
