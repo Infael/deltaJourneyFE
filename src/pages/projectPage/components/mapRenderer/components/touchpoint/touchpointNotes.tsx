@@ -19,7 +19,7 @@ import TextStyle from "@tiptap/extension-text-style";
 import { useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { useAtom, useAtomValue } from "jotai";
-import { PencilIcon } from "lucide-react";
+import { NotebookPenIcon } from "lucide-react";
 import { FC, useEffect, useMemo } from "react";
 
 interface TouchpointNotesProps {
@@ -78,13 +78,13 @@ export const TouchpointNotes: FC<TouchpointNotesProps> = ({ id }) => {
     <Sheet onOpenChange={(open) => !open && handleSave()}>
       <SheetTrigger asChild>
         <Button variant="ghost" className="h-6 px-2">
-          <PencilIcon />
+          <NotebookPenIcon />
         </Button>
       </SheetTrigger>
 
       <SheetContent side="right" portalContainerId="">
         <SheetHeader>
-          <SheetTitle>{touchpoint?.name}</SheetTitle>
+          <SheetTitle>{touchpoint?.name} Notes</SheetTitle>
           <SheetDescription>Here you can add and edit notes for the touchpoint.</SheetDescription>
         </SheetHeader>
 
