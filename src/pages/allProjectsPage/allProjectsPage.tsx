@@ -15,7 +15,10 @@ export const AllProjectsPage = () => {
 
   const { data } = useDriveFilesListSuspense({
     orderBy: "createdTime desc,name",
-    fields: "files(id,name,mimeType,createdTime,modifiedTime,owners)",
+    fields: "files(id,name,mimeType,createdTime,modifiedTime,owners(emailAddress))",
+    q: "name contains '.dj'",
+    includeItemsFromAllDrives: true,
+    supportsAllDrives: true,
   });
 
   useEffect(() => {
@@ -38,7 +41,7 @@ export const AllProjectsPage = () => {
             createdAt={file.createdTime!}
             lastModified={file.modifiedTime!}
             owners={
-              file.owners?.map((owner) => owner.displayName).filter((name): name is string => Boolean(name)) ?? [
+              file.owners?.map((owner) => owner.emailAddress).filter((name): name is string => Boolean(name)) ?? [
                 "Unknown",
               ]
             }
