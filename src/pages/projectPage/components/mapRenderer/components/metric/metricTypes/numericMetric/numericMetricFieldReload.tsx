@@ -61,7 +61,7 @@ export const NumericMetricFieldReload: FC<NumericMetricFieldReloadProps> = ({ me
                   value: {
                     ...metricData.metricData,
                     value: parseFloat(result?.rows?.[0]?.metricValues?.[0]?.value ?? "0"),
-                  },
+                  } as NumericMetricData,
                 });
                 return {
                   ...project,
