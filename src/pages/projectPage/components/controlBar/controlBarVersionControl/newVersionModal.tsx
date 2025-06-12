@@ -44,7 +44,7 @@ export const NewVersionModal: FC<NewVersionModalProps> = ({ open, setOpen }) => 
           name: z.string().min(1, "Version name is required"),
           startDate: z.date(),
           endDate: z.date(),
-          createFrom: z.enum(["empty", "lastLayout", "lastData"]),
+          createFrom: z.enum(["lastLayout", "lastData"]),
         })
         .refine(
           (data) => {
@@ -117,7 +117,6 @@ export const NewVersionModal: FC<NewVersionModalProps> = ({ open, setOpen }) => 
                 items={[
                   { label: "with last version layout", value: "lastLayout" },
                   { label: "with last version data and layout", value: "lastData" },
-                  { label: "empty", value: "empty" },
                 ]}
               />
             )}
