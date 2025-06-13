@@ -346,64 +346,203 @@ export const formsFormsResponsesList = (
   );
 };
 
-export const getFormsFormsResponsesListMutationOptions = <TError = unknown, TContext = unknown>(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof formsFormsResponsesList>>,
-    TError,
-    { formId: string; params?: FormsFormsResponsesListParams },
-    TContext
-  >;
-  request?: SecondParameter<typeof fetchClient>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof formsFormsResponsesList>>,
-  TError,
-  { formId: string; params?: FormsFormsResponsesListParams },
-  TContext
-> => {
-  const mutationKey = ["formsFormsResponsesList"];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof formsFormsResponsesList>>,
-    { formId: string; params?: FormsFormsResponsesListParams }
-  > = (props) => {
-    const { formId, params } = props ?? {};
-
-    return formsFormsResponsesList(formId, params, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
+export const getFormsFormsResponsesListQueryKey = (formId: string, params?: FormsFormsResponsesListParams) => {
+  return [`https://forms.googleapis.com/v1/forms/${formId}/responses`, ...(params ? [params] : [])] as const;
 };
 
-export type FormsFormsResponsesListMutationResult = NonNullable<Awaited<ReturnType<typeof formsFormsResponsesList>>>;
-
-export type FormsFormsResponsesListMutationError = unknown;
-
-export const useFormsFormsResponsesList = <TError = unknown, TContext = unknown>(
+export const getFormsFormsResponsesListQueryOptions = <
+  TData = Awaited<ReturnType<typeof formsFormsResponsesList>>,
+  TError = unknown,
+>(
+  formId: string,
+  params?: FormsFormsResponsesListParams,
   options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof formsFormsResponsesList>>,
-      TError,
-      { formId: string; params?: FormsFormsResponsesListParams },
-      TContext
-    >;
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof formsFormsResponsesList>>, TError, TData>>;
+    request?: SecondParameter<typeof fetchClient>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getFormsFormsResponsesListQueryKey(formId, params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof formsFormsResponsesList>>> = ({ signal }) =>
+    formsFormsResponsesList(formId, params, requestOptions, signal);
+
+  return { queryKey, queryFn, enabled: !!formId, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof formsFormsResponsesList>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type FormsFormsResponsesListQueryResult = NonNullable<Awaited<ReturnType<typeof formsFormsResponsesList>>>;
+export type FormsFormsResponsesListQueryError = unknown;
+
+export function useFormsFormsResponsesList<
+  TData = Awaited<ReturnType<typeof formsFormsResponsesList>>,
+  TError = unknown,
+>(
+  formId: string,
+  params: undefined | FormsFormsResponsesListParams,
+  options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof formsFormsResponsesList>>, TError, TData>> &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof formsFormsResponsesList>>,
+          TError,
+          Awaited<ReturnType<typeof formsFormsResponsesList>>
+        >,
+        "initialData"
+      >;
     request?: SecondParameter<typeof fetchClient>;
   },
   queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof formsFormsResponsesList>>,
-  TError,
-  { formId: string; params?: FormsFormsResponsesListParams },
-  TContext
-> => {
-  const mutationOptions = getFormsFormsResponsesListMutationOptions(options);
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useFormsFormsResponsesList<
+  TData = Awaited<ReturnType<typeof formsFormsResponsesList>>,
+  TError = unknown,
+>(
+  formId: string,
+  params?: FormsFormsResponsesListParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof formsFormsResponsesList>>, TError, TData>> &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof formsFormsResponsesList>>,
+          TError,
+          Awaited<ReturnType<typeof formsFormsResponsesList>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof fetchClient>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useFormsFormsResponsesList<
+  TData = Awaited<ReturnType<typeof formsFormsResponsesList>>,
+  TError = unknown,
+>(
+  formId: string,
+  params?: FormsFormsResponsesListParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof formsFormsResponsesList>>, TError, TData>>;
+    request?: SecondParameter<typeof fetchClient>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
-  return useMutation(mutationOptions, queryClient);
+export function useFormsFormsResponsesList<
+  TData = Awaited<ReturnType<typeof formsFormsResponsesList>>,
+  TError = unknown,
+>(
+  formId: string,
+  params?: FormsFormsResponsesListParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof formsFormsResponsesList>>, TError, TData>>;
+    request?: SecondParameter<typeof fetchClient>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getFormsFormsResponsesListQueryOptions(formId, params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+export const getFormsFormsResponsesListSuspenseQueryOptions = <
+  TData = Awaited<ReturnType<typeof formsFormsResponsesList>>,
+  TError = unknown,
+>(
+  formId: string,
+  params?: FormsFormsResponsesListParams,
+  options?: {
+    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof formsFormsResponsesList>>, TError, TData>>;
+    request?: SecondParameter<typeof fetchClient>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getFormsFormsResponsesListQueryKey(formId, params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof formsFormsResponsesList>>> = ({ signal }) =>
+    formsFormsResponsesList(formId, params, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+    Awaited<ReturnType<typeof formsFormsResponsesList>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
 };
+
+export type FormsFormsResponsesListSuspenseQueryResult = NonNullable<
+  Awaited<ReturnType<typeof formsFormsResponsesList>>
+>;
+export type FormsFormsResponsesListSuspenseQueryError = unknown;
+
+export function useFormsFormsResponsesListSuspense<
+  TData = Awaited<ReturnType<typeof formsFormsResponsesList>>,
+  TError = unknown,
+>(
+  formId: string,
+  params: undefined | FormsFormsResponsesListParams,
+  options: {
+    query: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof formsFormsResponsesList>>, TError, TData>>;
+    request?: SecondParameter<typeof fetchClient>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useFormsFormsResponsesListSuspense<
+  TData = Awaited<ReturnType<typeof formsFormsResponsesList>>,
+  TError = unknown,
+>(
+  formId: string,
+  params?: FormsFormsResponsesListParams,
+  options?: {
+    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof formsFormsResponsesList>>, TError, TData>>;
+    request?: SecondParameter<typeof fetchClient>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useFormsFormsResponsesListSuspense<
+  TData = Awaited<ReturnType<typeof formsFormsResponsesList>>,
+  TError = unknown,
+>(
+  formId: string,
+  params?: FormsFormsResponsesListParams,
+  options?: {
+    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof formsFormsResponsesList>>, TError, TData>>;
+    request?: SecondParameter<typeof fetchClient>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+export function useFormsFormsResponsesListSuspense<
+  TData = Awaited<ReturnType<typeof formsFormsResponsesList>>,
+  TError = unknown,
+>(
+  formId: string,
+  params?: FormsFormsResponsesListParams,
+  options?: {
+    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof formsFormsResponsesList>>, TError, TData>>;
+    request?: SecondParameter<typeof fetchClient>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getFormsFormsResponsesListSuspenseQueryOptions(formId, params, options);
+
+  const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
 
 /**
  * Get one response from the form.

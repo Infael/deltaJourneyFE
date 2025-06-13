@@ -1,6 +1,5 @@
 import { useDriveFilesGet } from "@/api/driveApi/drive-api";
 import { Spinner } from "@/components/ui/spinner/spinner";
-import { useFormResponses } from "@/hooks/useFormResponses";
 import { Project } from "@/lib/project/models/project";
 import { projectAtom } from "@/state/projectAtom";
 import { useAtom } from "jotai";
@@ -72,8 +71,6 @@ export const ProjectPage = () => {
       setNoVersions(false);
     }
   }, [projectData, noVersions]);
-
-  useFormResponses();
 
   if (isPending) {
     return (

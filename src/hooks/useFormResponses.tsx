@@ -2,21 +2,14 @@ import { useFormsFormsResponsesList } from "@/api/formApi/form-api";
 import { Answer, FormResponse } from "@/api/formApi/form-api.schemas";
 import { projectAtom } from "@/state/projectAtom";
 import { useAtomValue } from "jotai";
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 
 // TODO make time filter based on current project version
 export const useFormResponses = () => {
   const { current: project } = useAtomValue(projectAtom);
 
-  const { mutate: getFormResponses, data, isPending } = useFormsFormsResponsesList();
-
-  useEffect(() => {
-    if (project?.project.formData?.id) {
-      getFormResponses({
-        formId: project.project.formData.id,
-      });
-    }
-  }, [project, getFormResponses]);
+  const formId = project.project.formData?.id;
+  const { data, isPending } = useFormsFormsResponsesList(formId || "");
 
   const filterData = useCallback(
     (questionId: string): string[] => {

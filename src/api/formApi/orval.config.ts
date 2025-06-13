@@ -17,13 +17,6 @@ export default defineConfig({
         query: {
           useSuspenseQuery: true,
         },
-        operations: {
-          "forms.forms.responses.list": {
-            query: {
-              useMutation: true,
-            },
-          },
-        },
       },
     },
     hooks: {
