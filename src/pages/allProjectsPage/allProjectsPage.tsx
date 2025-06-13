@@ -16,7 +16,7 @@ export const AllProjectsPage = () => {
   const { data } = useDriveFilesListSuspense({
     orderBy: "createdTime desc,name",
     fields: "files(id,name,mimeType,createdTime,modifiedTime,owners(emailAddress))",
-    q: "name contains '.dj'",
+    q: "name contains '.dj' and mimeType='application/json'",
     includeItemsFromAllDrives: true,
     supportsAllDrives: true,
   });

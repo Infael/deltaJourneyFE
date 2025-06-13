@@ -5,7 +5,7 @@ import { useAtomValue } from "jotai";
 import { FC } from "react";
 import { MapCell } from "../mapCell";
 import { TouchpointDropdownMenu } from "./touchpointDropdownMenu";
-import { TouchpointNotes } from "./touchpointNotes";
+import { TouchpointMenu } from "./touchpointMenu/touchpointMenu";
 
 interface TouchpointProps {
   id: string;
@@ -22,7 +22,7 @@ export const Touchpoint: FC<TouchpointProps> = ({ id, name, width, touchpoints }
       <div className="flex h-full w-full flex-col items-center justify-center gap-4">
         {!presentationMode && editable && (
           <div className="absolute top-1 right-1 flex">
-            <TouchpointNotes id={id} />
+            <TouchpointMenu id={id} />
             <TouchpointDropdownMenu id={id} name={name} touchpoints={touchpoints} />
           </div>
         )}

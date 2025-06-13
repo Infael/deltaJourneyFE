@@ -1,15 +1,20 @@
 import {
+  DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAppForm } from "@/hooks/useForm";
+import { useFormResponses } from "@/hooks/useFormResponses";
+import { resetExperienceMetricValueCommand } from "@/lib/project/commands/metricCommands/experienceMetricCommands/resetExperienceMetricValuesCommand";
 import { updateExperienceMetricMetadataCommand } from "@/lib/project/commands/metricCommands/experienceMetricCommands/updateExperienceMetricMetadataCommand";
+import { updateExperienceMetricValueCommand } from "@/lib/project/commands/metricCommands/experienceMetricCommands/updateExperienceMetricValueCommand";
 import { MetricInfoExperience } from "@/lib/project/models/project";
 import { projectWriteAtom } from "@/state/projectWriteAtom";
 import { useAtom } from "jotai";
 import { FC } from "react";
+import { toast } from "sonner";
 import { z } from "zod";
 
 interface ExperienceMetricMenuProps {
@@ -18,6 +23,7 @@ interface ExperienceMetricMenuProps {
 
 export const ExperienceMetricMenu: FC<ExperienceMetricMenuProps> = ({ metricInfo }) => {
   const [, updateProject] = useAtom(projectWriteAtom);
+  const { getTouchpointsExperienceAverages } = useFormResponses();
 
   const form = useAppForm({
     defaultValues: {
@@ -55,12 +61,57 @@ export const ExperienceMetricMenu: FC<ExperienceMetricMenuProps> = ({ metricInfo
     },
   });
 
+  const resetData = () => {
+    updateProject((prev) => {
+      return {
+        ...prev,
+        project: resetExperienceMetricValueCommand(prev.project, {
+          metricId: metricInfo.id,
+          versionId: prev.actualShowedVersion,
+        }),
+      };
+    });
+  };
+
+  const loadData = () => {
+    const touchpointAverages = getTouchpointsExperienceAverages();
+    if (!touchpointAverages) {
+      toast.error("No data found, be sure you have a form published.");
+      return;
+    }
+    updateProject((prev) => {
+      let newProject = prev.project;
+      touchpointAverages.forEach((touchpoint) => {
+        const value = touchpoint.average;
+        if (value !== undefined) {
+          newProject = updateExperienceMetricValueCommand(newProject, {
+            metricId: metricInfo.id,
+            touchpointId: touchpoint.touchpointId,
+            value: value,
+            versionId: prev.actualShowedVersion,
+          });
+        }
+      });
+      return {
+        ...prev,
+        project: newProject,
+      };
+    });
+  };
+
   return (
     <>
       <DropdownMenuSeparator />
       <DropdownMenuSub>
         <DropdownMenuSubTrigger>Settings</DropdownMenuSubTrigger>
         <DropdownMenuSubContent>
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>Data</DropdownMenuSubTrigger>
+            <DropdownMenuSubContent>
+              <DropdownMenuItem onClick={resetData}>Reset</DropdownMenuItem>
+              <DropdownMenuItem onClick={loadData}>Load from form (experimental)</DropdownMenuItem>
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>Path</DropdownMenuSubTrigger>
             <DropdownMenuSubContent>

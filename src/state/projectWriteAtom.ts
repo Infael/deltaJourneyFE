@@ -61,3 +61,15 @@ export const currentProjectVersionAtom = atom((get) => {
   const { current } = get(projectAtom);
   return current.project.versions.find((version) => version.id === current.actualShowedVersion);
 });
+
+export const deleteHistoryAtom = atom(null, (get, set) => {
+  const { current } = get(projectAtom);
+  set(projectAtom, {
+    current: {
+      ...current,
+    },
+    past: [],
+    future: [],
+  });
+  set(saveAtom, false);
+});

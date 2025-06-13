@@ -9,6 +9,7 @@ export interface Project {
   description: string;
 
   versions: ProjectVersion[];
+  formData?: FormData;
 }
 
 export interface ProjectVersion {
@@ -21,6 +22,19 @@ export interface ProjectVersion {
   description: string;
   metrics: MetricInfo[];
   touchpoints: Touchpoint[];
+}
+
+export interface FormData {
+  id: string;
+  responderUri: string;
+  touchpointFormQuestions?: TouchpointFormQuestions[];
+}
+
+export interface TouchpointFormQuestions {
+  touchpointId: string;
+  experienceId: string;
+  gainId: string;
+  painId: string;
 }
 
 export interface MetricInfoBase {

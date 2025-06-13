@@ -19,6 +19,14 @@ export const useProjectSave = () => {
       toast("The latest version is already saved.");
       return;
     }
+    saveWithoutCheck();
+  };
+
+  /**
+   * Save project without checking if it is already saved.
+   * "save" should be used instead
+   */
+  const saveWithoutCheck = () => {
     if (projectStorage === "local") {
       downloadDjFile(project, projectMetadata.name);
       setSavedProject(true);
@@ -79,5 +87,6 @@ export const useProjectSave = () => {
   return {
     savedProject,
     save,
+    saveWithoutCheck,
   };
 };

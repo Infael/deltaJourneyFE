@@ -17,6 +17,8 @@ export const useAuth = () => {
       "https://www.googleapis.com/auth/drive.file",
       "https://www.googleapis.com/auth/analytics.readonly",
       "https://www.googleapis.com/auth/analytics.edit",
+      "https://www.googleapis.com/auth/forms.body",
+      "https://www.googleapis.com/auth/forms.responses.readonly",
     ].join(" "),
     onSuccess: (data) => {
       if (data.access_token) {
